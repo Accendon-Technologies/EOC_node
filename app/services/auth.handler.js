@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const accessTokenSecret = 'SecretEPSSA!';
-// const UserAuth = require("../modules/users/models/user_auth.model.js");
+
+var connection = require('../config/db.config').connection;
+const util = require('util');
 
 exports.authenticateJWT = (req, res, next) => {
 
@@ -140,4 +142,50 @@ exports.authorizeDevice = (req, res, next) => {
             message: "Invalid token"
         });
     }
+};
+
+
+exports.validateToken = async (req, res, next) => {
+
+
+    try {
+
+        let authHeader = req.headers.authorization;
+        console.log("========authHeader====== :", req.headers.authorization)
+        if (authHeader) {
+
+            const query = util.promisify(connection.query).bind(connection);
+
+            const get_user_query = `SELECT id,user_name FROM users WHERE auth_token = '${authHeader}' AND status != 2`
+            const is_user_exist = await query(get_user_query);
+
+            if (is_user_exist.length > 0) {
+                req.user = is_user_exist[0];
+                next();
+            } else {
+
+                return res.status(403).send({
+                    success_status: false,
+                    message: "Unauthorized User"
+                });
+            }
+
+
+        } else {
+            res.status(401).send({
+                success_status: false,
+                message: "Invalid Token"
+            });
+        }
+
+    } catch (error) {
+        res.status(401).send({
+            success_status: false,
+            message: error
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+
 };

@@ -1,11 +1,7 @@
 var connection = require('../../../config/db.config').connection;
 const util = require('util');
 
-// const User = require("../models/user.model.js");
-
-const SMS = require("../../../lib/sendSMS");
-const Crypto = require("../../../lib/crypto.js");
-const jwt = require('jsonwebtoken');
+const SMS = require("../../../lib/sendSMS"); // to send SMS
 
 // to get time
 var moment = require('moment')
@@ -398,3 +394,97 @@ exports.emailOtpVerification = async (req, res) => {
         await util.promisify(connection.end).bind(connection);
     }
 };
+
+// reset Password
+exports.resetPassword = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        if (req.body) {
+            let is_exist = await query(`SELECT * FROM users WHERE phone=${req.body.phone}`)
+            if (is_exist.length > 0) {
+
+                let update_query = `
+				UPDATE users
+				SET password = '${req.body.new_password}'
+				WHERE phone = '${req.body.phone}';`
+
+                await query(update_query)
+
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: 'Password updated successfully',
+                });
+
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: 'User does not exist',
+            });
+
+        }
+        return ({
+            status: true,
+            status_code: 202,
+            msg: 'Params missing',
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+// to get user profile
+exports.getProfile = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        let user_id = req.user.id
+        if (user_id) {
+
+            // get user detials based on id
+            let is_exist = await query(`SELECT id, user_name, phone, email FROM users WHERE id=${user_id}`)
+            if (is_exist.length > 0) {
+
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: 'Profile',
+                    result: is_exist
+                });
+
+
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: 'User does not exist',
+            });
+
+        }
+        return ({
+            status: true,
+            status_code: 202,
+            msg: 'Params missing',
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+

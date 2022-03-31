@@ -93,3 +93,34 @@ exports.emailOtpVerification = async (req, res) => {
         });
     }
 };
+
+// reset- password
+exports.resetPassword = async (req, res) => {
+    try {
+
+        const result = await userService.resetPassword(req)
+        res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};
+
+
+// to get user profile 
+exports.getProfile = async (req, res) => {
+    try {
+
+        const result = await userService.getProfile(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};

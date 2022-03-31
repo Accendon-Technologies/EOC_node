@@ -194,6 +194,76 @@ module.exports = app => {
   *           description:Success
   */
 
+  app.post("/api/users/reset-password", usersApi.resetPassword);
+  /**
+  * @swagger
+  *
+  * /api/users/reset-password:
+  *   post:
+  *     description:
+  *       - Use to login
+  *     tags:
+  *       - User Module
+  *     produces:
+  *       - application/json
+  *     parameters:
+  *       - in: header
+  *         name: Content-Type
+  *         type: string
+  *         value: application/x-www-form-urlencoded
+  *         required: true
+  * 
+  *       - name: phone
+  *         in: formData
+  *         required: true
+  *         type: string
+  *         example:
+  *          phone: 123456789
+  * 
+  *       - name: new_password
+  *         in: formData
+  *         required: true
+  *         type: string
+  *         example:
+  *          new_password: 1234
+  * 
+  *     responses:
+  *         200:
+  *           description:Success
+  */
+
+
+  app.get("/api/users/get-profile", authService.validateToken, usersApi.getProfile);
+  /**
+  * @swagger
+  *
+  * /api/users/get-profile:
+  *   get:
+  *     description:
+  *       - Use to login
+  *     tags:
+  *       - User Module
+  *     produces:
+  *       - application/json
+  *     parameters:
+  *       - in: header
+  *         name: Content-Type
+  *         type: string
+  *         value: application/x-www-form-urlencoded
+  *         required: true
+  * 
+  *       - in: header
+  *         name: Authorization
+  *         type: string
+  *         required: true
+  *         description: eg- OTA1NDg2OTM1MQ==  (user auth token)
+  * 
+  * 
+  * 
+  *     responses:
+  *         200:
+  *           description:Success
+  */
 
 
 };
