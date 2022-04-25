@@ -527,13 +527,27 @@ exports.packageList = async (req, res) => {
     try {
         const query = util.promisify(connection.query).bind(connection);
         let packages;
+        let select_query;
 
         if (req.body.course_id) {
             if (parseInt(req.body.course_id) === 0) {
-                packages = await query(`SELECT id, title, description, course_fee, course_duration_name, course_type ,img_url FROM packages WHERE status=1`)
+
+                select_query = `SELECT p.id, p.title, p.description, p.course_fee, p.course_duration_name, p.course_type ,p.img_url , c.title as category_name
+                                FROM packages as p
+                                LEFT JOIN courses as c
+                                    ON c.id = p.course_id
+                                WHERE p.status=1`
+                packages = await query(select_query)
 
             } else {
-                packages = await query(`SELECT id, title, description, course_fee, course_duration_name, course_type ,img_url FROM packages WHERE status=1 AND course_id=${req.body.course_id}`)
+
+                select_query = `SELECT p.id, p.title, p.description, p.course_fee, p.course_duration_name, p.course_type ,p.img_url , c.title as category_name
+                                FROM packages as p
+                                LEFT JOIN courses as c
+                                    ON c.id = p.course_id
+                                WHERE p.status=1 AND course_id=${req.body.course_id}`
+
+                packages = await query(select_query)
 
             }
 
