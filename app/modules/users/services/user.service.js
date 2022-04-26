@@ -594,7 +594,7 @@ exports.packageDetails = async (req, res) => {
         const query = util.promisify(connection.query).bind(connection);
         console.log("------ req.params.id ---- :", req.params.id)
         if (req.params.id) {
-            let package = await query(`SELECT id, title, img_url, benefits, scope, why_us, video_url, course_type, course_fee, course_duration_name FROM packages WHERE status=1 AND id=${req.params.id}`)
+            let package = await query(`SELECT id, title, img_url, description, benefits, scope, why_us, video_url, course_type, course_fee, course_duration_name FROM packages WHERE status=1 AND id=${req.params.id}`)
 
             if (package.length > 0) {
                 return ({
