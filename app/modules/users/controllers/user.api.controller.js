@@ -2,22 +2,6 @@ const userService = require("../services/user.service.js");
 const authService = require('../../../services/auth.handler.js');
 
 
-
-// //lilst nearby vendors
-// exports.homePage = async (req, res) => {
-//   try {
-
-//     const result = await userService.homePage(req)
-//     res.status(result.status).send(result);
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).send({
-//       success_status: false, message: error
-//     });
-//   }
-// };
-
 // generate otp
 exports.generateOtp = async (req, res) => {
     try {
@@ -187,6 +171,30 @@ exports.instructorList = async (req, res) => {
     }
 };
 
+
+
+
+// to get instructor details
+exports.instructorDetails = async (req, res) => {
+    try {
+
+        const result = await userService.instructorDetails(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};
+
+
+
+
+
+
+
 // to get home page
 exports.home = async (req, res) => {
     try {
@@ -267,6 +275,82 @@ exports.recommendedPackage = async (req, res) => {
     try {
 
         const result = await userService.recommendedPackage(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};
+
+// to voucher_code_validation
+exports.voucher_code_validation = async (req, res) => {
+    try {
+
+        const result = await userService.voucher_code_validation(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};
+
+
+// to get testimonials
+exports.testimonials = async (req, res) => {
+    try {
+
+        const result = await userService.testimonials(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};
+
+// to get one testimonials
+exports.getOneTestimonial = async (req, res) => {
+    try {
+
+        const result = await userService.getOneTestimonial(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};
+
+// to get success_stories
+exports.success_stories = async (req, res) => {
+    try {
+
+        const result = await userService.success_stories(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};
+
+// to get one SuccessStories
+exports.getOneSuccessStories = async (req, res) => {
+    try {
+
+        const result = await userService.getOneSuccessStories(req, res)
         return res.status(result.status_code).send(result);
 
     } catch (error) {

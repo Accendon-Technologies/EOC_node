@@ -56,10 +56,11 @@ const swaggerOptions = {
     }
 
   },
+
+
   apis: [
-
-
     "./app/modules/users/routes/user.routes.js",
+    "./app/modules/admin/routes/admin.routes.js"
 
   ]
 };
@@ -85,6 +86,7 @@ app.get("/", (req, res) => {
 
 
 require("./app/modules/users/routes/user.routes.js")(app); //  user module
+require("./app/modules/admin/routes/admin.routes.js")(app); //  admin module
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

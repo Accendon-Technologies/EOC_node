@@ -639,7 +639,13 @@ exports.instructorList = async (req, res) => {
         if (courses.length > 0) {
             for (let i = 0; i < courses.length; i++) {
 
-                let instructor = await query(`SELECT name, description,img_url FROM instructors WHERE course_id= ${courses[i].course_id} AND status=1`)
+
+                let instructor = await query(`SELECT i.id as instructor_id,i.name, i.description, i.img_url, c.title as course_name
+                                              FROM instructors as i
+                                              LEFT JOIN courses as c
+                                                   ON c.id = i.course_id
+                                              WHERE i.course_id= ${courses[i].course_id} 
+                                              AND i.status=1`)
                 masters.push({ ...courses[i], masters: instructor })
             }
         }
@@ -784,6 +790,10 @@ exports.subscriptionOrderCreation = async (req, res) => {
         const query = util.promisify(connection.query).bind(connection);
         let user_id = req.user.id
         let current_date = moment().tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss')
+        let voucher;
+        let TotalFee;
+        let transaction_type = 'cc';
+        let is_voucher;
 
         if (user_id && req.body) {
 
@@ -819,50 +829,118 @@ exports.subscriptionOrderCreation = async (req, res) => {
 
             }
 
-            // payment table insertion
-            let insert_query = `INSERT INTO user_subscription(user_id, 
-                                            package_id, 
-                                            transaction_type,
-                                            transaction_id,
-                                            transaction_amount,
-                                            transaction_status,
-                                            transaction_message,
-                                            created_on
-                                            )
-                                VALUES(${user_id}, 
-                                    ${req.body.package_id}, 
-                                    'cc',
-                                    'null',
-                                    ${package[0].course_fee},
-                                    0,
-                                    'not completed',
-                                    '${current_date}'
-                                    )`
 
-            let subscribe_insertion = await query(insert_query);
+            // Incorrect voucher code
+            if (req.body.voucher_code != undefined) {
+                voucher = await query(`select * from voucher where voucher_code='${req.body.voucher_code}' AND package_id =${req.body.package_id}`)
+                if (voucher.length === 0) {
+                    return ({
+                        status: true,
+                        status_code: 202,
+                        message: 'Incorrect voucher code',
+                        data: ""
+                    });
+                }
 
-            // Razor pay order creation
-            query_builder = {
-                amount: (parseInt(package[0].course_fee)) * 100,
-                currency: "INR",
-                receipt: subscribe_insertion.insertId// order id
+                if (voucher.length != 0) {
+                    TotalFee = voucher[0].balance_amount
+                    transaction_type = 'voucher'
+                    is_voucher = true;
+                }
+            } else {
+                TotalFee = package[0].course_fee;
+                transaction_type = 'cc'
+                is_voucher = false;
             }
 
-            let create_order = await Razorpay.createSubscriptionOrder(query_builder)
-
-            // update paymnet table
-            const update_user_query = `UPDATE user_subscription SET razorpay_id= '${create_order.id}' WHERE id=${subscribe_insertion.insertId};`
-            await query(update_user_query);
 
 
-            return ({
-                status: true,
-                status_code: 200,
-                message: "Order id created successfully.",
-                amount: parseInt(package[0].course_fee),
-                razorpay_id: create_order.id,
-                order_id: subscribe_insertion.insertId
-            });
+
+
+            if (parseInt(TotalFee) > 0) {
+
+                // payment table insertion
+                let insert_query = `INSERT INTO user_subscription(user_id, 
+                package_id, 
+                transaction_type,
+                transaction_id,
+                transaction_amount,
+                transaction_status,
+                transaction_message,
+                created_on
+                )
+                VALUES(${user_id}, 
+                    ${req.body.package_id}, 
+                    '${transaction_type}',
+                    'null',
+                    ${TotalFee},
+                    0,
+                    'not completed',
+                    '${current_date}'
+                    )`
+
+                let subscribe_insertion = await query(insert_query);
+
+                // Razor pay order creation
+                query_builder = {
+                    amount: (parseInt(package[0].course_fee)) * 100,
+                    currency: "INR",
+                    receipt: subscribe_insertion.insertId// order id
+                }
+
+                let create_order = await Razorpay.createSubscriptionOrder(query_builder)
+
+                // update paymnet table
+                const update_user_query = `UPDATE user_subscription SET razorpay_id= '${create_order.id}' WHERE id=${subscribe_insertion.insertId};`
+                await query(update_user_query);
+
+
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "Order id created successfully.",
+                    amount: parseInt(package[0].course_fee),
+                    razorpay_id: create_order.id,
+                    order_id: subscribe_insertion.insertId,
+                    is_voucher: is_voucher
+                });
+
+
+            } else if (parseInt(TotalFee) === 0) {
+
+                // payment table insertion
+                let insert_query = `INSERT INTO user_subscription(user_id, 
+                                    package_id, 
+                                    transaction_type,
+                                    transaction_id,
+                                    transaction_amount,
+                                    transaction_status,
+                                    transaction_message,
+                                    created_on
+                                    )
+                                    VALUES(${user_id}, 
+                                        ${req.body.package_id}, 
+                                        '${transaction_type}',
+                                        'null',
+                                        ${TotalFee},
+                                        0,
+                                        'Success',
+                                        '${current_date}'
+                                        )`
+
+                let subscribe_insertion = await query(insert_query);
+
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "Order id created successfully.",
+                    amount: parseInt(package[0].course_fee),
+                    razorpay_id: 0,
+                    order_id: subscribe_insertion.insertId,
+                    is_voucher: is_voucher
+                });
+            }
+
 
         }
 
@@ -902,6 +980,14 @@ exports.subscriptionPayment = async (req, res) => {
                                        transaction_date= '${moment().tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss')}'
                                        WHERE id=${req.body.order_id};`
             await query(update_payment_query);
+
+
+            if (req.body.voucher_code != undefined || req.body.voucher_cod != null) {
+                // voucher table updation
+                await query(`UPDATE voucher SET payment_status = 1 WHERE voucher_code = '${req.body.voucher_code}'`)
+
+            }
+
 
 
             // update user table 
@@ -1075,6 +1161,320 @@ exports.recommendedPackage = async (req, res) => {
 
         }
 
+
+        return ({
+            status: true,
+            status_code: 202,
+            message: 'User id or params are missing',
+            result: []
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+// voucher code validation
+module.exports.voucher_code_validation = async (req, res) => {
+    try {
+
+        const query = util.promisify(connection.query).bind(connection);
+        const package = await query(`select * from packages where status=1 AND course_fee=${req.body.amount} AND id=${req.body.package_id}`);
+        const voucher = await query(`select * from voucher where voucher_code='${req.body.voucher_code}' AND package_id =${req.body.package_id}`)
+
+        if (voucher.length === 0 || package.length === 0) {
+            return ({
+                status: true,
+                status_code: 202,
+                message: voucher.length === 0 ? "Voucher code does not exist" : "Package doest not exist",
+            });
+        }
+
+        let localTime = moment.utc(voucher[0].created_on).toDate();
+        let convertedTime = moment(localTime).format('YYYY-MM-DD');
+        let currentTime = moment().format('YYYY-MM-DD');
+
+        let daysCount = moment(currentTime).diff(convertedTime, 'days');
+
+        if (voucher[0].expiry_days < daysCount) {
+            return ({
+                status: true,
+                status_code: 202,
+                message: "Voucher code does not exist"
+            });
+        }
+
+
+        // console.log("-------voucher payment status------------ :", voucher[0].payment_status)
+        if (voucher[0].payment_status === null || voucher[0].payment_status === "null") {
+            let balanceAmount = (package[0].course_fee - voucher[0].amount)
+            // console.log("--------balanceAmount-------- :", balanceAmount)
+            const update_query = `
+			UPDATE voucher
+			SET user_id = ${req.body.user_id} ,
+			balance_amount = ${balanceAmount}
+			WHERE voucher_code = '${req.body.voucher_code}';
+			`
+            // to edit values to voucher table
+            await query(update_query);
+            return ({
+                status: true,
+                status_code: 200,
+                message: `Voucher code validated. Now you can access the package : ${package[0].title} `,
+                balance_amount: balanceAmount
+            });
+        }
+
+        return ({
+            status: true,
+            status_code: 202,
+            message: "Sorry ..this voucher code is not available."
+        });
+
+    } catch (error) {
+        console.error(error);
+        return ({
+            status: false,
+            status_code: 500,
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+
+    }
+};
+
+
+
+// to get testimonial list
+exports.testimonials = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        let user_id = req.user.id
+
+        if (user_id) {
+            let list = await query(`SELECT * FROM testimonials WHERE status=1 ORDER BY id DESC;`)
+
+            if (list.length > 0) {
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "testimonials",
+                    result: list
+                });
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: "No data",
+                result: []
+            });
+
+
+        }
+
+
+        return ({
+            status: true,
+            status_code: 202,
+            message: 'User id or params are missing',
+            result: []
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+//  to get one testimonial
+exports.getOneTestimonial = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        let user_id = req.user.id
+
+        if (user_id && req.params.id) {
+            let list = await query(`SELECT * FROM testimonials WHERE status=1 AND id= ${req.params.id}`)
+
+            if (list.length > 0) {
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "testimonials",
+                    result: list
+                });
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: "No data",
+                result: []
+            });
+
+
+        }
+
+
+        return ({
+            status: true,
+            status_code: 202,
+            message: 'User id or params are missing',
+            result: []
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+
+// to get success_stories list
+exports.success_stories = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        let user_id = req.user.id
+
+        if (user_id) {
+            let list = await query(`SELECT * FROM success_stories WHERE status=1 ORDER BY id DESC;`)
+
+            if (list.length > 0) {
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "success_stories",
+                    result: list
+                });
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: "No data",
+                result: []
+            });
+
+
+        }
+
+        return ({
+            status: true,
+            status_code: 202,
+            message: 'User id or params are missing',
+            result: []
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+
+//  to get one sccess story
+exports.getOneSuccessStories = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        let user_id = req.user.id
+
+        if (user_id && req.params.id) {
+            let list = await query(`SELECT * FROM success_stories WHERE status=1 AND id= ${req.params.id}`)
+
+            if (list.length > 0) {
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "success_stories",
+                    result: list
+                });
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: "No data",
+                result: []
+            });
+
+        }
+
+        return ({
+            status: true,
+            status_code: 202,
+            message: 'User id or params are missing',
+            result: []
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+exports.instructorDetails = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        let user_id = req.user.id
+
+        if (user_id && req.params.id) {
+
+
+            let list = await query(`SELECT i.id as instructor_id, i.name, i.description, i.img_url, c.title as course_name
+                                            FROM instructors as i
+                                            LEFT JOIN courses as c
+                                                ON c.id = i.course_id
+                                            WHERE i.id= ${req.params.id} 
+                                            AND i.status=1`)
+
+
+            // let list = await query(`SELECT * FROM instructors WHERE status=1 AND id= ${req.params.id}`)
+
+            if (list.length > 0) {
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "success_stories",
+                    result: list
+                });
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: "No data",
+                result: []
+            });
+
+        }
 
         return ({
             status: true,
