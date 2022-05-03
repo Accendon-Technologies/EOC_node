@@ -636,19 +636,24 @@ exports.instructorList = async (req, res) => {
         let masters = []
         let courses = await query(`SELECT id as course_id, title as course_title FROM courses WHERE status=1`)
 
-        if (courses.length > 0) {
-            for (let i = 0; i < courses.length; i++) {
+        // if (courses.length > 0) {
+        //     for (let i = 0; i < courses.length; i++) {
 
+        // let instructor = await query(`SELECT i.id as instructor_id,i.name, i.description, i.img_url, c.title as course_name
+        //                               FROM instructors as i
+        //                               LEFT JOIN courses as c
+        //                                    ON c.id = i.course_id
+        //                               WHERE i.course_id= ${courses[i].course_id} 
+        //                               AND i.status=1`)
+        // masters.push({ ...courses[i], ...instructor })
+        //     }
+        // }
 
-                let instructor = await query(`SELECT i.id as instructor_id,i.name, i.description, i.img_url, c.title as course_name
-                                              FROM instructors as i
-                                              LEFT JOIN courses as c
-                                                   ON c.id = i.course_id
-                                              WHERE i.course_id= ${courses[i].course_id} 
-                                              AND i.status=1`)
-                masters.push({ ...courses[i], masters: instructor })
-            }
-        }
+        let instructor = await query(`SELECT i.id as instructor_id,i.name, i.description, i.img_url, c.title as course_name, c.id as course_id
+        FROM instructors as i
+        LEFT JOIN courses as c
+             ON c.id = i.course_id
+        WHERE  i.status=1`)
 
 
         if (courses.length > 0) {
@@ -656,7 +661,7 @@ exports.instructorList = async (req, res) => {
                 status: true,
                 status_code: 200,
                 message: 'masters',
-                result: masters
+                result: instructor
             });
         }
 
