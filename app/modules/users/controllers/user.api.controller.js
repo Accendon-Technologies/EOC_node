@@ -360,3 +360,35 @@ exports.getOneSuccessStories = async (req, res) => {
         });
     }
 };
+
+
+// to get announcements list
+exports.announcements = async (req, res) => {
+    try {
+
+        const result = await userService.announcements(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};
+
+
+// to get class list
+exports.class_list = async (req, res) => {
+    try {
+
+        const result = await userService.class_list(req, res)
+        return res.status(result.status_code).send(result);
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({
+            success_status: false, message: error
+        });
+    }
+};

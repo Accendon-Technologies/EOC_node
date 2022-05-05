@@ -298,12 +298,12 @@ module.exports = app => {
   */
 
 
-  app.post("/api/users/package-list", authService.validateToken, usersApi.packageList);
+  app.get("/api/users/package-list", authService.validateToken, usersApi.packageList);
   /**
   * @swagger
   *
   * /api/users/package-list:
-  *   post:
+  *   get:
   *     description:
   *       - Use to login
   *     tags:
@@ -324,12 +324,6 @@ module.exports = app => {
   *         description: eg- OTA1NDg2OTM1MQ==  (user auth token)
   * 
   * 
-  *       - name: course_id
-  *         in: formData
-  *         required: true
-  *         type: string
-  *         example:
-  *          course_id: 0 for skip or all
   * 
   * 
   *     responses:
@@ -525,6 +519,28 @@ module.exports = app => {
   *         type: string
   *         example:
   *          voucher_code: 31so
+  * 
+  *       - name: user_name
+  *         in: formData
+  *         required: false
+  *         type: string
+  *         example:
+  *          user_name: varun
+  * 
+  * 
+  *       - name: email
+  *         in: formData
+  *         required: false
+  *         type: string
+  *         example:
+  *          email: varun@gmail.com
+  * 
+  *       - name: phone
+  *         in: formData
+  *         required: false
+  *         type: string
+  *         example:
+  *          phone: 1234567890
   * 
   * 
   *     responses:
@@ -1001,6 +1017,91 @@ module.exports = app => {
    *         200:
    *           description:Success
    */
+
+  app.get("/api/users/announcements", authService.validateToken, usersApi.announcements);
+  /**
+   * @swagger
+   *
+   * /api/users/announcements:
+   *   get:
+   *     description:
+   *       - Use to validate voucher code
+   * 
+   *     summary: Use to list announcements
+   * 
+   *     tags:
+   *        - User Module
+   *     parameters:
+   *       - in: header
+   *         name: Content-Type
+   *         type: string
+   *         value: application/x-www-form-urlencoded
+   *         required: true
+   * 
+   *       - in: header
+   *         name: Authorization
+   *         type: string
+   *         required: true
+   *         description: eg- OTA1NDg2OTM1MQ==  (user auth token)
+   * 
+   * 
+   *     produces:
+   *       - application/json
+   *     responses:
+   *         200:
+   *           description:Success
+   */
+
+
+  app.post("/api/users/class", authService.validateToken, usersApi.class_list);
+  /**
+   * @swagger
+   *
+   * /api/users/class:
+   *   post:
+   *     description:
+   *       - Use to validate voucher code
+   * 
+   *     summary: Use to get class
+   * 
+   *     tags:
+   *        - User Module
+   *     parameters:
+   *       - in: header
+   *         name: Content-Type
+   *         type: string
+   *         value: application/x-www-form-urlencoded
+   *         required: true
+   * 
+   *       - in: header
+   *         name: Authorization
+   *         type: string
+   *         required: true
+   *         description: eg- OTA1NDg2OTM1MQ==  (user auth token)
+   * 
+   * 
+   *       - name: class_type
+   *         in: formData
+   *         required: true
+   *         type: string
+   *         example:
+   *          class_type: ongoing or upcoming
+   * 
+   *       - name: date
+   *         in: formData
+   *         required: false
+   *         type: string
+   *         example:
+   *          date: 2022-05-16
+   * 
+   * 
+   *     produces:
+   *       - application/json
+   *     responses:
+   *         200:
+   *           description:Success
+   */
+
 
 };
 

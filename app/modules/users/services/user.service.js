@@ -529,50 +529,30 @@ exports.packageList = async (req, res) => {
         let packages;
         let select_query;
 
-        if (req.body.course_id) {
-            if (parseInt(req.body.course_id) === 0) {
+        let current_date = moment().format('YYYY-MM-DD');
 
-                select_query = `SELECT p.id, p.title, p.description, p.course_fee, p.course_duration_name, p.course_type ,p.img_url , c.title as category_name
+        select_query = `SELECT p.id, p.title, p.description, p.course_fee, p.course_duration_name, p.course_type ,p.img_url , c.title as category_name
                                 FROM packages as p
                                 LEFT JOIN courses as c
                                     ON c.id = p.course_id
-                                WHERE p.status=1`
-                packages = await query(select_query)
+                                WHERE p.status=1 AND p.end_date > '${current_date}'`
+        packages = await query(select_query)
 
-            } else {
 
-                select_query = `SELECT p.id, p.title, p.description, p.course_fee, p.course_duration_name, p.course_type ,p.img_url , c.title as category_name
-                                FROM packages as p
-                                LEFT JOIN courses as c
-                                    ON c.id = p.course_id
-                                WHERE p.status=1 AND course_id=${req.body.course_id}`
-
-                packages = await query(select_query)
-
-            }
-
-            if (packages.length > 0) {
-                return ({
-                    status: true,
-                    status_code: 200,
-                    message: 'packages',
-                    result: packages
-                });
-            }
-
+        if (packages.length > 0) {
             return ({
                 status: true,
-                status_code: 202,
-                message: 'No packages',
-                result: []
+                status_code: 200,
+                message: 'packages',
+                result: packages
             });
-
         }
 
         return ({
             status: true,
             status_code: 202,
-            message: 'Course Id is missing',
+            message: 'No packages',
+            result: []
         });
 
 
@@ -802,6 +782,39 @@ exports.subscriptionOrderCreation = async (req, res) => {
 
         if (user_id && req.body) {
 
+            // user name is required
+            if (req.body.user_name === undefined || req.body.user_name === null || req.body.user_name === 'null') {
+                return ({
+                    status: true,
+                    status_code: 202,
+                    message: 'Name is required',
+                    result: []
+                });
+            }
+
+            // email is required
+            if (req.body.email === undefined || req.body.email === null || req.body.email === 'null') {
+                return ({
+                    status: true,
+                    status_code: 202,
+                    message: 'Email is required',
+                    result: []
+                });
+            }
+
+            // phone is required
+            if (req.body.phone === undefined || req.body.phone === null || req.body.phone === 'null') {
+                return ({
+                    status: true,
+                    status_code: 202,
+                    message: 'Phone is required',
+                    result: []
+                });
+            }
+
+
+
+
             // need to check already package purchased
             let is_subscription = await query(`SELECT * FROM user_subscription WHERE user_id=${user_id} AND transaction_message='Success'`)
 
@@ -859,9 +872,12 @@ exports.subscriptionOrderCreation = async (req, res) => {
             }
 
 
+            // user table updation
+            let update_user = `UPDATE users SET user_name= '${req.body.user_name}',  email= '${req.body.email}', phone='${req.body.phone}'   WHERE id=${user_id};`
+            await query(update_user);
 
 
-
+            // amount condition checking
             if (parseInt(TotalFee) > 0) {
 
                 // payment table insertion
@@ -1478,6 +1494,149 @@ exports.instructorDetails = async (req, res) => {
                 message: "No data",
                 result: []
             });
+
+        }
+
+        return ({
+            status: true,
+            status_code: 202,
+            message: 'User id or params are missing',
+            result: []
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+
+
+// to get announcements list
+exports.announcements = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        let user_id = req.user.id
+
+        if (user_id) {
+            let list = await query(`SELECT * FROM announcements WHERE status=1 ORDER BY id DESC;`)
+
+            if (list.length > 0) {
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "announcements",
+                    result: list
+                });
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: "No data",
+                result: []
+            });
+
+
+        }
+
+        return ({
+            status: true,
+            status_code: 202,
+            message: 'User id or params are missing',
+            result: []
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            message: "Internal Server Error"
+        });
+    } finally {
+        console.log("entering and leaving the finally block");
+        await util.promisify(connection.end).bind(connection);
+    }
+};
+
+
+// to get class list
+exports.class_list = async (req, res) => {
+    try {
+        const query = util.promisify(connection.query).bind(connection);
+        let user_id = req.user.id
+        let select_query;
+
+        if (user_id) {
+
+            // to get user batch id
+            let getBatch = await query(`select batch_id from batch_student where  user_id=${user_id}`);
+            console.log("--- getBatch ----- :", getBatch[0].batch_id)
+
+
+            if (req.body.class_type === 'ongoing') {
+                let date = moment().format('YYYY-MM-DD HH:mm:ss');
+
+                select_query = `SELECT c.*, s.title as subject_title FROM classes c
+                                LEFT JOIN subjects s
+                                ON s.subject_id = c.subject_id
+                                WHERE c.class_type='Live' AND c.batch_id LIKE '%${getBatch[0].batch_id}%' AND (c.class_straming_date <= '${date}') AND (c.class_streaming_enddate >= '${date}');`
+
+            } else if (req.body.class_type === 'upcoming') {
+
+                // date checking
+                if (!(req.body.date && req.body.date !== '')) {
+                    return ({
+                        status: true,
+                        status_code: 202,
+                        message: 'Date is required'
+                    });
+                }
+
+
+                let current_date = moment().format('YYYY-MM-DD');
+
+                if (req.body.date < current_date) {
+                    return ({
+                        status: true,
+                        status_code: 202,
+                        message: 'Please choose current or upcoming date'
+                    });
+                }
+
+                let start_date = req.body.date + ' ' + '00:00:00'
+                let end_date = req.body.date + ' ' + '23:59:59'
+
+                select_query = `SELECT c.*, s.title as subject_title FROM classes c
+                                LEFT JOIN subjects s
+                                ON s.subject_id = c.subject_id
+                                WHERE  c.class_type='Live' AND c.batch_id LIKE '%${getBatch[0].batch_id}%'  AND (c.class_straming_date BETWEEN '${start_date}' AND '${end_date}')`
+
+
+            }
+
+            let list = await query(select_query)
+
+            if (list.length > 0) {
+                return ({
+                    status: true,
+                    status_code: 200,
+                    message: "class",
+                    result: list
+                });
+            }
+
+            return ({
+                status: true,
+                status_code: 202,
+                message: "No class",
+                result: []
+            });
+
 
         }
 
