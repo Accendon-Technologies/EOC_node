@@ -469,12 +469,6 @@ module.exports = app => {
   *         required: true
   *         description: eg- OTA1NDg2OTM1MQ==  (user auth token)
   * 
-  *       - name: course_id
-  *         in: formData
-  *         required: true
-  *         type: string
-  *         example:
-  *          course_id: 0 for skip or all
   * 
   *     responses:
   *         200:

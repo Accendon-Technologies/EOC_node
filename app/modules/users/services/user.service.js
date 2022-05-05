@@ -531,6 +531,13 @@ exports.packageList = async (req, res) => {
 
         let current_date = moment().format('YYYY-MM-DD');
 
+        let update_query = `
+                        UPDATE packages
+                        SET status = 2
+                        WHERE end_date < '${current_date}';`
+
+        await query(update_query)
+
         select_query = `SELECT p.id, p.title, p.description, p.course_fee, p.course_duration_name, p.course_type ,p.img_url , c.title as category_name
                                 FROM packages as p
                                 LEFT JOIN courses as c
@@ -674,57 +681,197 @@ exports.home = async (req, res) => {
         var home;
         let instructor;
         let packages;
+        let recommended_packages;
+
+        let user_payment;
+        let user_batch;
+
+        let ongoing_class_list;
+        let upcoming_class_list;
+        let missed_class_list;
+        let subject_list;
+        let announcement_list;
+
+        let current_date = moment().format('YYYY-MM-DD');
+
+
+        let update_query = `UPDATE packages
+                            SET status = 2
+                            WHERE end_date < '${current_date}';`
+
+        await query(update_query)
+
+
         console.log("------user_id-------- :", req.user.id)
         console.log("------user_type-------- :", req.user.user_type)
         if (user_id) {
 
+            let payment_query = `SELECT us.id, us.user_id , us.package_id, us.transaction_message 
+                                 FROM user_subscription as us
+                                 LEFT JOIN packages as p
+                                    ON p.id = us.package_id
+                                 WHERE user_id=${user_id}  AND p.status =1 AND p.end_date > '${current_date}' AND us.transaction_message ='Success'
+                                 `
+            user_payment = await query(payment_query);
+            console.log("------user_payment------ :", payment_query)
+
+            console.log("------user_payment------ :", user_payment[0])
+
+            if (user_payment.length > 0) {
+                user_type = 'user'
+            } else {
+                user_type = 'guest'
+            }
+
+            // user table updation
+            await query(`UPDATE users SET user_type= '${user_type}' WHERE id= ${req.user.id} `);
+
             // checking user type
             if (user_type === 'guest') {
-                home = { heading: 'Hello , ' + Guest }
+                home = { heading: 'Hello , ' + 'Guest' }
                 let courses = await query(`SELECT id, title, img_url FROM courses WHERE status=1`)
                 if (courses.length > 0) {
                     home['courses'] = courses
                 }
             } else {
+                user_batch = await query(`SELECT bs.batch_id, b.batch_title, b.start_date
+                                          FROM batch_student as bs
+                                          LEFT JOIN batch as b
+                                            ON b.id = bs.batch_id
+                                          WHERE bs.user_id= ${user_id}  AND b.end_date > '${current_date}'
+                                            `)
+
                 home = {
                     heading: 'Hello , ' + req.user.user_name
+                }
+
+                if (user_batch.length > 0) {
+                    home['message'] = {
+                        title: 'Congratulations!',
+                        // text: 'You have successfully subscribed for ' + row_transaction_packages[0].PKGS,
+                        text: `Your are added to Batch: ${user_batch[0].batch_title} and starting date is ${user_batch[0].start_date}`,
+                        bg_color: '#ffbc00',
+                        url: ''
+                    };
+                } else {
+                    home['message'] = {
+                        title: 'Congratulations!',
+                        // text: 'You have successfully subscribed for ' + row_transaction_packages[0].PKGS,
+                        text: "Your payment is completed. You will be added to the batch soon.",
+                        bg_color: '#ffbc00',
+                        url: ''
+                    };
                 }
             }
 
             // master list
-            if (req.body.course_id === 0) {
-                instructor = await query(`SELECT name, description,img_url FROM instructors WHERE status=1 LIMIT 3`)
-            } else {
-                instructor = await query(`SELECT name, description,img_url FROM instructors WHERE course_id= ${req.body.course_id} AND status=1 LIMIT 3`)
-            }
+            instructor = await query(`SELECT name, description,img_url FROM instructors WHERE status=1 LIMIT 3`)
 
             if (instructor.length > 0) {
                 home['masters'] = instructor;
             }
 
             // package list
-
-            if (req.body.course_id === 0) {
-
-                packages = await query(`SELECT id, title, description, course_fee, course_duration_name, course_type ,img_url FROM packages WHERE status=1 `)
-
-            } else {
-                let is_recommended_package_exist = await query(`SELECT id,course_id,package_type FROM recommended_package WHERE course_id= ${req.body.course_id} AND user_id=${req.user.id}`)
-
-                if (is_recommended_package_exist.length > 0) {
-                    packages = await query(`SELECT id, title, description, course_fee, course_duration_name, course_type ,img_url FROM packages WHERE status=1 AND course_id=${req.body.course_id} AND course_type = '${is_recommended_package_exist[0].package_type}'`)
-
-                } else {
-                    packages = await query(`SELECT id, title, description, course_fee, course_duration_name, course_type ,img_url FROM packages WHERE status=1 AND course_id=${req.body.course_id}`)
-                }
-            }
+            // if (user_type === 'guest') {
+            packages = await query(`SELECT id, title, description, course_fee, course_duration_name, course_type ,img_url FROM packages WHERE status=1 `)
+            // } else {
+            //     packages = await query(`SELECT id, title, description, course_fee, course_duration_name, course_type ,img_url FROM packages WHERE status=1 AND course_id = ${user_course_id}`)
+            // }
 
             if (packages.length > 0) {
                 home['packages'] = packages;
             }
 
-            //--- common for all -- success stories
+            // to get recommened package list
+            let is_recommended_package_exist = await query(`SELECT id,course_id,package_type FROM recommended_package WHERE  user_id=${req.user.id}`)
 
+            if (is_recommended_package_exist.length > 0) {
+                recommended_packages = await query(`SELECT id, title, description, course_fee, course_duration_name, course_type ,img_url FROM packages WHERE status=1 AND course_type = '${is_recommended_package_exist[0].package_type}'`)
+
+                if (recommended_packages.length > 0) {
+                    home['recommended_packages'] = recommended_packages;
+                }
+            }
+
+            // class list
+            if (user_type === 'user') {
+                // ongoing class list
+                let date = moment().format('YYYY-MM-DD HH:mm:ss');
+
+                select_query = `SELECT c.*, s.title as subject_title , 'ongoing_class' AS current_class_type 
+                                FROM classes c
+                                LEFT JOIN subjects s
+                                ON s.subject_id = c.subject_id
+                                WHERE c.class_type='Live' AND c.batch_id LIKE '%${user_batch[0].batch_id}%' AND (c.class_straming_date <= '${date}') AND (c.class_streaming_enddate >= '${date}')
+                                ORDER BY c.class_straming_date ASC
+								LIMIT 3                                
+                                ;`
+
+                ongoing_class_list = await query(select_query)
+
+                if (ongoing_class_list.length > 0) {
+                    home['ongoing_class'] = ongoing_class_list
+                }
+
+
+                // upcoming class
+
+                let start_date = current_date + ' ' + '00:00:00'
+                let end_date = current_date + ' ' + '23:59:59'
+
+                select_query = `SELECT c.*, s.title as subject_title , 'upcoming_class' AS current_class_type 
+                                FROM classes c
+                                LEFT JOIN subjects s
+                                ON s.subject_id = c.subject_id
+                                WHERE  c.class_type='Live' AND c.batch_id LIKE '%${user_batch[0].batch_id}%'  AND (c.class_straming_date BETWEEN '${start_date}' AND '${end_date}')
+                                ORDER BY c.class_straming_date ASC
+								LIMIT 3
+                                `;
+
+                upcoming_class_list = await query(select_query)
+
+                if (upcoming_class_list.length > 0) {
+                    home['upcoming_class'] = upcoming_class_list
+                }
+
+
+                // missed class list
+                select_query = `SELECT c.*, s.title as subject_title , 'missed_class' AS current_class_type 
+                                FROM classes c
+                                LEFT JOIN subjects s
+                                ON s.subject_id = c.subject_id
+                                WHERE  c.class_type='Video Tutorial' AND c.batch_id LIKE '%${user_batch[0].batch_id}%' 
+                                ORDER BY c.class_straming_date ASC
+                                LIMIT 3;
+                                `;
+                missed_class_list = await query(select_query)
+                if (missed_class_list.length > 0) {
+                    home['missed_class'] = missed_class_list
+                }
+
+
+                // subject list
+                let user_course_id = await query(`SELECT course_id FROM packages WHERE id=${user_payment[0].package_id}`)
+                select_query = `SELECT * FROM subjects WHERE course_id= ${user_course_id[0].course_id} AND package_id =${user_payment[0].package_id}`
+
+                subject_list = await query(select_query)
+
+                if (subject_list.length > 0) {
+                    home['subjects'] = subject_list
+                }
+
+
+                // announcement list
+                select_query = `SELECT * FROM announcements;`
+                announcement_list = await query(select_query)
+
+                if (announcement_list.length > 0) {
+                    home['announcements'] = announcement_list
+                }
+            }
+
+
+            //--- common for all -- success stories
             let success_stories = await query(`SELECT id, video_url, video_url_type, story_type, writer_name FROM success_stories WHERE status=1 LIMIT 3`)
             if (success_stories.length > 0) {
                 home['success_stories'] = success_stories
