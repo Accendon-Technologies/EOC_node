@@ -50,7 +50,7 @@ exports.generateOtp = async (req, res) => {
 
                 console.log("---- else ------:", auth_token)
 
-                const update_user_query = `UPDATE users SET otp=${otp}, auth_token='${auth_token}' WHERE phone= ${req.body.phone} AND status!=2`
+                const update_user_query = `UPDATE users SET otp=${otp}, auth_token='${auth_token}' , user_name='${req.body.user_name}', email='${req.body.email}'  WHERE phone= ${req.body.phone} AND status!=2`
                 await query(update_user_query);
 
                 // SMS integration 
@@ -929,38 +929,6 @@ exports.subscriptionOrderCreation = async (req, res) => {
 
         if (user_id && req.body) {
 
-            // user name is required
-            if (req.body.user_name === undefined || req.body.user_name === null || req.body.user_name === 'null') {
-                return ({
-                    status: true,
-                    status_code: 202,
-                    message: 'Name is required',
-                    result: []
-                });
-            }
-
-            // email is required
-            if (req.body.email === undefined || req.body.email === null || req.body.email === 'null') {
-                return ({
-                    status: true,
-                    status_code: 202,
-                    message: 'Email is required',
-                    result: []
-                });
-            }
-
-            // phone is required
-            if (req.body.phone === undefined || req.body.phone === null || req.body.phone === 'null') {
-                return ({
-                    status: true,
-                    status_code: 202,
-                    message: 'Phone is required',
-                    result: []
-                });
-            }
-
-
-
 
             // need to check already package purchased
             let is_subscription = await query(`SELECT * FROM user_subscription WHERE user_id=${user_id} AND transaction_message='Success'`)
@@ -1018,10 +986,6 @@ exports.subscriptionOrderCreation = async (req, res) => {
                 is_voucher = false;
             }
 
-
-            // user table updation
-            let update_user = `UPDATE users SET user_name= '${req.body.user_name}',  email= '${req.body.email}', phone='${req.body.phone}'   WHERE id=${user_id};`
-            await query(update_user);
 
 
             // amount condition checking

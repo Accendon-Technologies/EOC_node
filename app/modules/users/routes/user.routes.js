@@ -38,6 +38,20 @@ module.exports = app => {
   *         example:
   *          type: forgot-pwd or generate-otp
   * 
+  *       - name: user_name
+  *         in: formData
+  *         required: true
+  *         type: string
+  *         example:
+  *          user_name: Varun
+  * 
+  *       - name: email
+  *         in: formData
+  *         required: true
+  *         type: string
+  *         example:
+  *          email: varun@gmail.com
+  * 
   *     responses:
   *         200:
   *           description:Success
@@ -514,27 +528,7 @@ module.exports = app => {
   *         example:
   *          voucher_code: 31so
   * 
-  *       - name: user_name
-  *         in: formData
-  *         required: false
-  *         type: string
-  *         example:
-  *          user_name: varun
   * 
-  * 
-  *       - name: email
-  *         in: formData
-  *         required: false
-  *         type: string
-  *         example:
-  *          email: varun@gmail.com
-  * 
-  *       - name: phone
-  *         in: formData
-  *         required: false
-  *         type: string
-  *         example:
-  *          phone: 1234567890
   * 
   * 
   *     responses:
