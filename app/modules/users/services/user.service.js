@@ -621,7 +621,7 @@ exports.instructorList = async (req, res) => {
     try {
         const query = util.promisify(connection.query).bind(connection);
         let masters = []
-        let courses = await query(`SELECT id as course_id, title as course_title FROM courses WHERE status=1`)
+        // let courses = await query(`SELECT id as course_id, title as course_title FROM courses WHERE status=1`)
 
         // if (courses.length > 0) {
         //     for (let i = 0; i < courses.length; i++) {
@@ -643,7 +643,7 @@ exports.instructorList = async (req, res) => {
         WHERE  i.status=1`)
 
 
-        if (courses.length > 0) {
+        if (instructor.length > 0) {
             return ({
                 status: true,
                 status_code: 200,
@@ -765,7 +765,11 @@ exports.home = async (req, res) => {
             }
 
             // master list
-            instructor = await query(`SELECT name, description,img_url FROM instructors WHERE status=1 LIMIT 3`)
+            instructor = await query(`SELECT i.id as instructor_id,i.name, i.description, i.img_url, c.title as course_name, c.id as course_id
+            FROM instructors as i
+            LEFT JOIN courses as c
+                 ON c.id = i.course_id
+            WHERE  i.status=1 LIMIT 3 `)
 
             if (instructor.length > 0) {
                 home['masters'] = instructor;
@@ -872,7 +876,7 @@ exports.home = async (req, res) => {
 
 
             //--- common for all -- success stories
-            let success_stories = await query(`SELECT id, video_url, video_url_type, story_type, writer_name FROM success_stories WHERE status=1 LIMIT 3`)
+            let success_stories = await query(`SELECT * FROM success_stories WHERE status=1 LIMIT 3`)
             if (success_stories.length > 0) {
                 home['success_stories'] = success_stories
             }
@@ -883,6 +887,24 @@ exports.home = async (req, res) => {
             if (testimonials.length > 0) {
                 home['testimonials'] = testimonials
             }
+
+
+            //--- common for all -- courses
+            let courses = await query(`SELECT id, title, img_url FROM courses WHERE status=1`)
+            if (courses.length > 0) {
+                home['courses'] = courses
+            }
+
+            //--- common for all -- banners
+            let banner = await query(`SELECT * FROM banner WHERE status=1`)
+            if (banner.length > 0) {
+                home['banner'] = banner
+            }
+
+
+
+            // know more -- Image -- Common for all
+            home['know_more'] = 'https://eocnodedev.s3.ap-south-1.amazonaws.com/uploadImages/knowmore.png'
 
 
             return ({
