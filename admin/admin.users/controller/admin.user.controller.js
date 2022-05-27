@@ -56,3 +56,15 @@ exports.updateadminusers = async (req,res)=>{
   }
 }
 
+exports.getoneadminusers = async (req, res) => {
+    try {
+       const data = await adminservice.getone(req,res);
+     return res.status(200).send(data)
+       }
+catch(err){
+    res.status(500).json({
+        status:false,
+        message:err.message
+    })
+}
+}

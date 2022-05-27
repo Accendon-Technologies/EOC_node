@@ -179,3 +179,35 @@ exports.update = async (req,res)=>{
     
         }
 }
+
+exports.getone = async(req,res)=>{
+    try{
+    const query = util.promisify(connection.query).bind(connection);
+    let id = req.params.id
+        const list =  await query(`SELECT * FROM adminusers WHERE status=1 AND id= id`)
+  if(list.length>0){
+      return res.status(200).send({
+          status:true,
+          message:"succesfully got",
+          data: list
+      })
+  }
+  else{
+      return res.status(202).send({
+          status:true,
+          message:"no data have found",
+          data:[]
+      })
+  }
+} 
+catch (error) {
+    console.error(error);
+    return res.status(500).send({
+        message: error.message||"Internal Server Error"
+    });
+}
+finally {
+    console.log("entering and leaving the finally block");
+    await util.promisify(connection.end).bind(connection);
+}
+}
