@@ -6,6 +6,10 @@ module.exports = app => {
 
 
   app.post("/api/users/generate-otp", usersApi.generateOtp);
+
+
+
+
   /**
   * @swagger
   *
@@ -13,6 +17,7 @@ module.exports = app => {
   *   post:
   *     description:
   *       - Use to login
+  *    
   *     tags:
   *       - User Module
   *     produces:

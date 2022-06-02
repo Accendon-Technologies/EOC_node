@@ -1,5 +1,5 @@
 const adminService = require("../services/admin.service");
-const authService = require('../../../services/auth.handler.js');
+const authService = require('../../../../services/auth.handler.js');
 
 
 // voucher code generation

@@ -1,9 +1,9 @@
-var connection = require('../../../config/db.config').connection;
+var connection = require('../../../../config/db.config').connection;
 var util = require('util');
 
-var SMS = require("../../../lib/sendSMS"); // to send SMS
+var SMS = require("../../../../lib/sendSMS"); // to send SMS
 
-var Razorpay = require('../../../lib/razorPayment')
+var Razorpay = require('../../../../lib/razorPayment')
 
 // to get time
 // var moment = require('moment')

@@ -1,7 +1,7 @@
 module.exports = app => {
 
     const adminApi = require("../controllers/admin.controller");
-    const authService = require('../../../services/auth.handler.js');
+    const authService = require('../../../../services/auth.handler.js');
 
 
 

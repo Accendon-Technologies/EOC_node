@@ -1,8 +1,9 @@
 var multer = require('multer');
 const path = require('path')
 exports.storage = (data) => multer.diskStorage({
+  
     destination: (req, file, cb) => {
-
+       
         cb(null, data.path);
     },
     filename: (req, file, cb) => {
