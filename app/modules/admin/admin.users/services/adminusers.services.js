@@ -60,15 +60,69 @@ exports.deleteadmin = async (req,res)=>{
 
 exports.update = async (req,res)=>{
     try{
-       const data = await queries.update_query(req,res)
-       return res.status(200).send(data)
-    }
+        const Id = req.params.id
+       
+       
+        const query = util.promisify(connection.query).bind(connection);
+        const email= await query(`SELECT Email,PhoneNumber FROM adminusers Where id = '${req.params.id}'`)
+
+       const value =email[0].Email
+    
+       const phone_value = email[0].PhoneNumber
+      
+        const Email = req.body.Email
+  
+        const PhoneNumber = req.body.PhoneNumber
+
+       
+                   
+        if(value!==Email||phone_value!==PhoneNumber){
+            
+            const result = await query(`SELECT Email FROM adminusers Where Email = '${req.body.Email}'`)
+          
+            const results = await query(`select PhoneNumber from adminusers where PhoneNumber = '${req.body.PhoneNumber}'`)
+          
+                if(result.length>0||results.length>0){
+                   
+                    const email_ID = await query(`select id from adminusers where Email = '${req.body.Email}' OR PhoneNumber = '${req.body.PhoneNumber}'`)
+                    
+                    const email_id = email_ID[0].id
+                    
+                   
+                    if(email_id!=Id){
+                        console.log(result)
+                        return res.status(400).send({
+                            status:true,
+                            message:` The ${req.body.Email} email or ${req.body.PhoneNumber} phonenumber already exists`
+                         })
+                    }
+                    else {
+                        const data = await queries.update_query(req,res)
+                        return res.status(200).send(data)   
+                    }
+                }
+                else{
+                    const data = await queries.update_query(req,res)
+                    return res.status(200).send(data)   
+                }
+             
+        }
+                        
+         else{
+            const data = await queries.update_query(req,res)
+            return res.status(200).send(data)                           
+        }
+                    
+                   
+    
+    }                
+                    
     catch(err){
        return res.status(500).send({
-           message:err.message
+           message:err
        })
     }
-    }
+ }
 
 exports.getone = async(req,res)=>{
   try{

@@ -49,10 +49,10 @@ exports.deleteadminusers = async (req,res)=>{
 exports.updateadminusers = async (req,res)=>{
   try{
     const data = await adminservice.update(req,res);
-        res.status(200).send(data)
+       return res.status(200).send(data)
   }
   catch(err){
-    res.status(500).json({
+   return res.status(500).json({
         status:false,
         message:err.message
     })

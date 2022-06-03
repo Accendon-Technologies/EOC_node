@@ -100,8 +100,10 @@ return res.status(400).send({
         const update = 'UPDATE adminusers SET FirstName = ?,LastName =?,Email =?,PhoneNumber =?,Username = ?,UserType =?,Password =?,Subject =?,AboutInstructor =?,profilephoto =? WHERE id = ?';
     
         const query = util.promisify(connection.query).bind(connection)
-
+        
         await query(update,[FirstName,LastName,Email,PhoneNumber,Username,UserType,Password,Subject,AboutInstructor,profilephoto,id],(err,row)=>{
+          
+          
             if(err){
            
                   

@@ -1,5 +1,5 @@
 const express = require('express')
-const controller = require('../controller/admin.user.controller')
+const controller = require('../controller/adminuser.controller')
 const router = express('Router');
 
 
@@ -165,11 +165,11 @@ router.route('/api/delete-adminuser/:id').delete(controller.deleteadminusers)
 
 
 
-router.route('/api/adminuser-edit/:id').put(controller.updateadminusers)
+router.route('/api/edit-adminuser/:id').put(controller.updateadminusers)
 /** 
 * @swagger
 *
-* /api/adminuser-edit/:id:
+* /api/edit-adminuser/:id:
 *   put:
 *     description:
 *       - updating the detils admin users

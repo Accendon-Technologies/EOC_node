@@ -9,8 +9,8 @@ var cors = require('cors');
 
 
 // parse requests of content-type - application/json
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
@@ -64,7 +64,7 @@ const swaggerOptions = {
   apis: [
     "./app/modules/users/routes/user.routes.js",
     "./app/modules/admin/voucher/routes/admin.routes.js",
-    "./app/modules/admin/admin_users/router/admin_users.routes.js",
+    "./app/modules/admin/admin.users/router/admin_users.routes.js",
     "./app/modules/admin/Batch/router/Batch.routes.js"
 
 
@@ -94,9 +94,9 @@ app.get("/", (req, res) => {
 require("./app/modules/users/routes/user.routes.js")(app); //  user module
 require("./app/modules/admin/voucher/routes/admin.routes.js")(app); //  admin module
 
-app.use('/',require('./app/modules/admin/admin_users/router/admin_users.routes.js'));//adminuser
-app.use('/',require('./app/modules/admin/students/router/students.routes.js'));
-app.use('/',require('./app/modules/admin/Batch/router/Batch.routes.js'));
+app.use('/',require('./app/modules/admin/admin.users/router/admin_users.routes.js'));//adminuser
+app.use('/',require('./app/modules/admin/students/router/students.routes.js'));//student
+app.use('/',require('./app/modules/admin/Batch/router/Batch.routes.js'));//B
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
