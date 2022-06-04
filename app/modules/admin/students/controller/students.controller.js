@@ -20,7 +20,7 @@ exports.get_student = async ( req,res)=>{
 }
 exports.create_student = async (req,res)=>{
         try{
-           
+            console.log(req.file)
          const data = await studentService.add_student(req,res);
          res.status(200).send(data)
         }
@@ -32,9 +32,9 @@ exports.create_student = async (req,res)=>{
         }
 }
 
-exports.delete_Batch= async (req,res)=>{
+exports.delete_student= async (req,res)=>{
     try{
-        const data = await studentService.delete_batch(req,res);
+        const data = await studentService.delete_students(req,res);
         res.status(200).send(data)
        }
        catch(err){
@@ -48,7 +48,7 @@ exports.delete_Batch= async (req,res)=>{
 
 exports.update_student = async (req,res)=>{
   try{
-    const data = await studentService.update_batch(req,res);
+    const data = await studentService.update_Student(req,res);
         res.status(200).send(data)
   }
   catch(err){
