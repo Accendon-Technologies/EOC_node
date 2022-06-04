@@ -6,19 +6,19 @@ const router = express('Router');
 
 
 
-router.route('/api/adminusers/adminuserlist').get(controller.get_student);
+router.route('/api/studentslist').get(controller.get_student);
 
 
 /** 
 * @swagger
 *
-* /api/adminusers/adminuserlist:
+* /api/studentslist:
 *   get:
 *     description:
-*       - getting the admin users
-*     summary: Use to get admin-users
+*       - getting the student
+*     summary: Use to get student
 *     tags:
-*       - Admin-user Module
+*       - students Module
 *     produces:
 *       - application/json
 *     parameters:
@@ -34,17 +34,17 @@ router.route('/api/adminusers/adminuserlist').get(controller.get_student);
 */
 
 
-router.route('/api/adminusers/add-adminuser').post(controller.create_student);
+router.route('/api/add-student').post(controller.create_student);
 /** 
 * @swagger
 *
-* /api/adminusers/add-adminuser:
+* /api/add-student:
 *   post:
 *     description:
-*       - adding the admin users
-*     summary: Use to add admin-users
+*       - adding the student details
+*     summary: Use to add student
 *     tags:
-*       - Admin-user Module
+*       - students Module
 *     produces:
 *       - application/json
 *     parameters:
@@ -70,27 +70,77 @@ router.route('/api/adminusers/add-adminuser').post(controller.create_student);
 *         example:
 *          Lastname: Babu
 * 
-*       - name: Email
+* 
+*       - name: AddressLine1
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          Email: adminusers12@gmail.com
-* 
+*          AddressLine1: balabhavanam,vallikunnam,vallikunnam.p.o
+
+*       - name: AddressLine2
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          AddressLine2: balabhavanam,vallikunnam,vallikunnam.p.o
+
+*       - name: CityorCountry
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          CityorCountry: Kayamkulam
+
+*       - name: Zip_Code
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Zip_code: 690504
+
 *       - name: PhoneNumber
 *         in: formData
 *         required: true
 *         type: string
 *         example:
 *          PhoneNumber: 9823456712
-* 
-*       - name: Username
+
+*       - name: Email
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          Username: beena345
-*
+*          Email: adminusers12@gmail.com
+
+*       - name: Email_Verification_status
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Email_Verification_status: verified/not-verified
+
+*       - name: Qualifiaction
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Qualification: B-Tech
+
+*       - name: Verification_status
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Verification_status: verified
+
+*       - name: Login_id
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Login_id: student
+
 *       - name: Password
 *         in: formData
 *         required: true
@@ -98,26 +148,26 @@ router.route('/api/adminusers/add-adminuser').post(controller.create_student);
 *         example:
 *          Password: Beena1345^babu
 
-*       - name: UserType
+*       - name: profilephoto
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          UserType: Teacher
+*          profilephoto: Teacher.jpg
 *
-*       - name: Subject
+*       - name: Id_proof_front
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          Subject: English
+*          Id_proof_front: fhy.png
 
-*       - name: AboutInstructor
+*       - name: Id_proof_back
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          AboutInstructor:  A primary school teacher with over seven years of experience as a English Teacher.
+*          Id_proof_back: fv.png
 *     responses:
 *         200:
 *           description:Success
@@ -127,17 +177,17 @@ router.route('/api/adminusers/add-adminuser').post(controller.create_student);
 
 
 
-router.route('/api/adminusers/delete-adminuser/:id').delete(controller.delete_student)
+router.route('/api/delete-student/:id').delete(controller.delete_student)
 /** 
 * @swagger
 *
-* /api/adminusers/delete-adminuser/:id:
+* /api/delete-student/:id:
 *   delete:
 *     description:
-*       - deleting the admin user
-*     summary: Use to delete admin-user
+*       - deleting the student
+*     summary: Use to delete student
 *     tags:
-*       - Admin-user Module
+*       - students Module
 *     produces:
 *       - application/json
 *     parameters:
@@ -166,17 +216,17 @@ router.route('/api/adminusers/delete-adminuser/:id').delete(controller.delete_st
 
 
 
-router.route('/api/adminusers/admin-edit/:id').put(controller.update_student)
+router.route('/api/edit-student/:id').put(controller.update_student)
 /** 
 * @swagger
 *
-* /api/adminusers/admin-edit/:id:
+* /api/edit-student/:id:
 *   put:
 *     description:
-*       - updating the detils admin users
-*     summary: Use to update details of admin-users
+*       - updating the detils of student
+*     summary: Use to update details of student
 *     tags:
-*       - Admin-user Module
+*       - students Module
 *     produces:
 *       - application/json
 *     parameters:
@@ -192,9 +242,6 @@ router.route('/api/adminusers/admin-edit/:id').put(controller.update_student)
 *         type: string
 *         example:
 *          id: 65
-* 
-
-* 
 *       - name: FirstName 
 *         in: formData
 *         required: true
@@ -209,27 +256,77 @@ router.route('/api/adminusers/admin-edit/:id').put(controller.update_student)
 *         example:
 *          Lastname: Babu
 * 
-*       - name: Email
+* 
+*       - name: AddressLine1
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          Email: adminusers12@gmail.com
-* 
+*          AddressLine1: balabhavanam,vallikunnam,vallikunnam.p.o
+
+*       - name: AddressLine2
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          AddressLine2: balabhavanam,vallikunnam,vallikunnam.p.o
+
+*       - name: CityorCountry
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          CityorCountry: Kayamkulam
+
+*       - name: Zip_Code
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Zip_code: 690504
+
 *       - name: PhoneNumber
 *         in: formData
 *         required: true
 *         type: string
 *         example:
 *          PhoneNumber: 9823456712
-* 
-*       - name: Username
+
+*       - name: Email
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          Username: beena345
-*
+*          Email: adminusers12@gmail.com
+
+*       - name: Email_Verification_status
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Email_Verification_status: verified/not-verified
+
+*       - name: Qualifiaction
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Qualification: B-Tech
+
+*       - name: Verification_status
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Verification_status: verified
+
+*       - name: Login_id
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Login_id: student
+
 *       - name: Password
 *         in: formData
 *         required: true
@@ -237,43 +334,44 @@ router.route('/api/adminusers/admin-edit/:id').put(controller.update_student)
 *         example:
 *          Password: Beena1345^babu
 
-*       - name: UserType
+*       - name: profilephoto
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          UserType: Teacher
+*          profilephoto: Teacher.jpg
 *
-*       - name: Subject
+*       - name: Id_proof_front
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          Subject: English
+*          Id_proof_front: fhy.png
 
-*       - name: AboutInstructor
+*       - name: Id_proof_back
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          AboutInstructor:  A primary school teacher with over seven years of experience as a English Teacher.
+*          Id_proof_back: fv.png 
+
 *     responses:
 *         200:
 *           description:Success
 */
 
-router.route('/api/adminusers/getone-adminuser/:id').get(controller.getOne_student);
+router.route('/api/getone-student/:id').get(controller.getOne_student);
 
 /** 
 * @swagger
 *
-* /api/adminusers/getone-adminuser/:id:
+* /api/getone-student/:id:
 *   get:
 *     description:
-*       - getone the admin user
-*     summary: Use to getone admin-user
+*       - getone the student
+*     summary: Use to getone student
 *     tags:
-*       - Admin-user Module
+*       - students Module
 *     produces:
 *       - application/json
 *     parameters:

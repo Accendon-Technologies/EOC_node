@@ -1,5 +1,5 @@
 var connection = require('../../../../config/db.config').connection;
-const e = require('express');
+
 var util = require('util');
 const queries = require('../Queries/queries')
 

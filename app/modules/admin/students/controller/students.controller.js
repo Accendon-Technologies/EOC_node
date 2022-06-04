@@ -7,7 +7,7 @@ const studentService = require('../services/students.services')
 
 exports.get_student = async ( req,res)=>{
         try{
-            const data = await studentService.getall_student(req,res);
+            const data = await studentService.getall_Student(req,res);
             res.status(200).send(data)
         
         }
@@ -20,7 +20,7 @@ exports.get_student = async ( req,res)=>{
 }
 exports.create_student = async (req,res)=>{
         try{
-            console.log(req.file)
+           
          const data = await studentService.add_student(req,res);
          res.status(200).send(data)
         }

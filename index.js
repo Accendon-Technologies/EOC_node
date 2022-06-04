@@ -65,7 +65,7 @@ const swaggerOptions = {
     "./app/modules/users/routes/user.routes.js",
     "./app/modules/admin/voucher/routes/admin.routes.js",
     "./app/modules/admin/admin.users/router/admin_users.routes.js",
-    "./app/modules/admin/Batch/router/Batch.routes.js"
+    "./app/modules/admin/students/router/students.routes.js"
 
 
   ]
