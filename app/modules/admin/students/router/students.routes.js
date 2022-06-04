@@ -177,7 +177,7 @@ router.route('/api/add-student').post(controller.create_student);
 
 
 
-router.route('/api/delete-student/:id').delete(controller.delete_student)
+router.route('/api/delete-student/:id').delete(controller.delete_Batch)
 /** 
 * @swagger
 *

@@ -5,19 +5,19 @@ const router = express('Router');
 
 
 
-router.route('/api/adminusers/allbatch').get(controller.get_batch);
+router.route('/api/batchlist').get(controller.get_batch);
 
 
 /** 
 * @swagger
 *
-* /api/adminusers/adminuserlist:
+* /api/batchlist:
 *   get:
 *     description:
-*       - getting the admin users
-*     summary: Use to get admin-users
+*       - getting the batch
+*     summary: Use to get batch
 *     tags:
-*       - Admin-user Module
+*       - Batch Module
 *     produces:
 *       - application/json
 *     parameters:
@@ -33,17 +33,17 @@ router.route('/api/adminusers/allbatch').get(controller.get_batch);
 */
 
 
-router.route('/api/adminusers/addbatch').post(controller.create_Batch);
+router.route('/api/add-batch').post(controller.create_batch);
 /** 
 * @swagger
 *
-* /api/adminusers/add-adminuser:
+* /api/add-batch:
 *   post:
 *     description:
-*       - adding the admin users
-*     summary: Use to add admin-users
+*       - adding the batch
+*     summary: Use to add batch
 *     tags:
-*       - Admin-user Module
+*       - Batch Module
 *     produces:
 *       - application/json
 *     parameters:
@@ -106,11 +106,11 @@ router.route('/api/adminusers/addbatch').post(controller.create_Batch);
 
 
 
-router.route('/api/adminusers/delete-batch/:id').delete(controller.delete_Batch)
+router.route('/api/delete-batch/:id').delete(controller.delete_Batch)
 /** 
 * @swagger
 *
-* /api/adminusers/delete-adminuser/:id:
+* /api/delete-batch/:id:
 *   delete:
 *     description:
 *       - deleting the Batch
@@ -145,137 +145,118 @@ router.route('/api/adminusers/delete-batch/:id').delete(controller.delete_Batch)
 
 
 
-// router.route('/api/adminusers/admin-edit/:id').put(controller.updateadminusers)
-// /** 
-// * @swagger
-// *
-// * /api/adminusers/admin-edit/:id:
-// *   put:
-// *     description:
-// *       - updating the detils admin users
-// *     summary: Use to update details of admin-users
-// *     tags:
-// *       - Admin-user Module
-// *     produces:
-// *       - application/json
-// *     parameters:
-// *       - in: header
-// *         name: Content-Type
-// *         type: string
-// *         value: application/x-www-form-urlencoded
-// *         required: true
+router.route('/api/edit-batch/:id').put(controller.update_Batch)
+/** 
+* @swagger
+*
+* /api/edit-batch/:id:
+*   put:
+*     description:
+*       - updating the detils of batch
+*     summary: Use to update details of batch
+*     tags:
+*       - Batch Module
+*     produces:
+*       - application/json
+*     parameters:
+*       - in: header
+*         name: Content-Type
+*         type: string
+*         value: application/x-www-form-urlencoded
+*         required: true
 
-// *       - name: id
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          id: 65
-// * 
+*       - name: id
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          id: 65
+* 
+*       - name: Package 
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Package: 
+* 
+*       - name: Title
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Title: 
+* 
+*       - name: Date
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Date: 23-05-2022
+* 
+*       - name: Start_Date
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Start_Date: 25-06-2022
+* 
+*       - name: End_Date
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          End_Date: 15-12-2022
+*
+*       - name: Description
+*         in: formData
+*         required: true
+*         type: string
+*         example:
+*          Description: 
 
-// * 
-// *       - name: FirstName 
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          FirstName: Beena
-// * 
-// *       - name: LastName
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          Lastname: Babu
-// * 
-// *       - name: Email
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          Email: adminusers12@gmail.com
-// * 
-// *       - name: PhoneNumber
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          PhoneNumber: 9823456712
-// * 
-// *       - name: Username
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          Username: beena345
-// *
-// *       - name: Password
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          Password: Beena1345^babu
+* 
+*      
+*        
+*     responses:
+*         200:
+*           description:Success
+*/
 
-// *       - name: UserType
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          UserType: Teacher
-// *
-// *       - name: Subject
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          Subject: English
+router.route('/api/getone-batch/:id').get(controller.getOne_batch);
 
-// *       - name: AboutInstructor
-// *         in: formData
-// *         required: true
-// *         type: string
-// *         example:
-// *          AboutInstructor:  A primary school teacher with over seven years of experience as a English Teacher.
-// *     responses:
-// *         200:
-// *           description:Success
-// */
+/** 
+* @swagger
+*
+* /api/getone-batch/:id:
+*   get:
+*     description:
+*       - getone the batch
+*     summary: Use to getone batch
+*     tags:
+*       - Batch Module
+*     produces:
+*       - application/json
+*     parameters:
+*       - in: header
+*         name: Content-Type
+*         type: string
+*         value: application/x-www-form-urlencoded
+*         required: true
 
-// router.route('/api/adminusers/getone-adminuser/:id').get(controller.getoneadminusers);
+*       - in: path
+*         name: id
+*         required: true
+*         type: integer
+*         example:
+*          id: 45
+* 
 
-// /** 
-// * @swagger
-// *
-// * /api/adminusers/getone-adminuser/:id:
-// *   get:
-// *     description:
-// *       - getone the admin user
-// *     summary: Use to getone admin-user
-// *     tags:
-// *       - Admin-user Module
-// *     produces:
-// *       - application/json
-// *     parameters:
-// *       - in: header
-// *         name: Content-Type
-// *         type: string
-// *         value: application/x-www-form-urlencoded
-// *         required: true
+*     responses:
+*         200:
+*           description:Success
+*/
 
-// *       - in: path
-// *         name: id
-// *         required: true
-// *         type: integer
-// *         example:
-// *          id: 45
-// * 
 
-// *     responses:
-// *         200:
-// *           description:Success
-// */
-
-router.route('/api/adminusers/addstudentbatch').get(controller.add_student_batch)
 
 
 
