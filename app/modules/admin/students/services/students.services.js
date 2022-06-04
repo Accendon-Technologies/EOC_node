@@ -66,7 +66,7 @@ exports.update = async (req,res)=>{
        
        
         const query = util.promisify(connection.query).bind(connection);
-        const email= await query(`SELECT Email,PhoneNumber FROM student Where student_id = '${req.params.id}'`)
+        const email= await query(`SELECT Email,PhoneNumber FROM student Where id = '${req.params.id}'`)
 
        const value =email[0].Email
     
@@ -86,7 +86,7 @@ exports.update = async (req,res)=>{
           
                 if(result.length>0||results.length>0){
                    
-                    const email_ID = await query(`select student_id from student where Email = '${req.body.Email}' OR PhoneNumber = '${req.body.PhoneNumber}'`)
+                    const email_ID = await query(`select id from student where Email = '${req.body.Email}' OR PhoneNumber = '${req.body.PhoneNumber}'`)
                     
                     const email_id = email_ID[0].id
                     

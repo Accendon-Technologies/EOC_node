@@ -11,7 +11,7 @@ exports.get_batch = async ( req,res)=>{
         
         }
         catch(err){
-         res.status(400).send({
+        return res.status(500).send({
                  status: false, 
                  message: err
             });

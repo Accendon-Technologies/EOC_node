@@ -174,8 +174,8 @@ else{
  exports.getone_query = async (req,res)=>{
     try{
         const query = util.promisify(connection.query).bind(connection);
-        let Id = req.params.id
-            const list =  await query(`SELECT * FROM adminusers WHERE  id= 'Id'`)
+        
+    const list =  await query(`SELECT * FROM adminusers WHERE  id= '${ req.params.id}'`)
       if(list.length>0){
           return res.status(200).send({
               status:true,
@@ -197,8 +197,5 @@ else{
             message: error.message||"Internal Server Error"
         });
     }
-    finally {
-        console.log("entering and leaving the finally block");
-        await util.promisify(connection.end).bind(connection);
-    }
+   
  }

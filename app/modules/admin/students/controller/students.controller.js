@@ -12,7 +12,7 @@ exports.get_student = async ( req,res)=>{
         
         }
         catch(err){
-         res.status(400).send({
+         return res.status(400).send({
                  status: false, 
                  message: err
             });
@@ -61,7 +61,7 @@ exports.update_student = async (req,res)=>{
 
 exports.getOne_student = async (req, res) => {
     try {
-       const data = await studentService.getone_Student(req,res);
+       const data = await studentService.getone(req,res);
      return res.status(200).send(data)
        }
 catch(err){

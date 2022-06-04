@@ -144,12 +144,12 @@ return res.status(400).send({
  exports.delete_query = async(req,res)=>{
  try{
     const query = util.promisify(connection.query).bind(connection)
-    const id = req.params.id
-    const result = await query(`select * from student where student_id = '${req.params.id}'`)
+    const Id = req.params.id
+    const result = await query(`select * from student where id = '${req.params.id}'`)
    
     if(result.length>0){
 
-    await query(`DELETE FROM student WHERE student_id = '${req.params.id}'`,[id],(err,row)=>{
+    await query(`DELETE FROM student WHERE id = '${req.params.id}'`,[Id],(err,row)=>{
         if(row){
             return res.status(200).send({
                 status:true,
@@ -187,7 +187,7 @@ else{
     try{
         const query = util.promisify(connection.query).bind(connection);
  
-            const list =  await query(`SELECT * FROM student WHERE  student_id= '${req.params.id}'`)
+            const list =  await query(`SELECT * FROM student WHERE  id= '${req.params.id}'`)
       if(list.length>0){
           return res.status(200).send({
               status:true,

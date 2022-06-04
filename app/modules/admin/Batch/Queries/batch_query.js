@@ -45,7 +45,7 @@ exports.getbatch_queries = async (req,res)=>{
 
         
         
-        const qr = `INSERT INTO batch(Package,Title,Date,Start_Date,End_Date,Description) values('${Package}','${Title}}','${Date}','${Start_Date}','${End_Date}','${Description}')`
+        const qr = `INSERT INTO batch(Package,Title,Date,Start_Date,End_Date,Description) values('${Package}','${Title}','${Date}','${Start_Date}','${End_Date}','${Description}')`
         const query = util.promisify(connection.query).bind(connection)
    
         await query(qr,(err,result)=>{
@@ -63,7 +63,7 @@ exports.getbatch_queries = async (req,res)=>{
 
        return res.status(200).json({
             status:true,
-            message:"added data of adminusers",
+            message:"added data ",
            
         })
          }
@@ -126,15 +126,15 @@ return res.status(400).send({
  try{
     const query = util.promisify(connection.query).bind(connection)
     const id = req.params.id
-    const result = await query(`select * from batch where batch_id = '${req.params.id}'`)
+    const result = await query(`select * from batch where id = '${req.params.id}'`)
    
     if(result.length>0){
 
-    await query(`DELETE FROM batch WHERE batch_id = '${req.params.id}'`,[id],(err,row)=>{
+    await query(`DELETE FROM batch WHERE id = '${req.params.id}'`,[id],(err,row)=>{
         if(row){
             return res.status(200).send({
                 status:true,
-                message:"deleted the  deatils" 
+                message:"deleted the  details" 
             })
            
         }
@@ -168,8 +168,8 @@ else{
     try{
         const query = util.promisify(connection.query).bind(connection);
  
-            const list =  await query(`SELECT * FROM batch WHERE  batch_id = '${req.params.id}'`)
-            console.log(list)
+            const list =  await query(`SELECT * FROM batch WHERE  id = '${req.params.id}'`)
+        
       if(list.length>0){
           console.log(list.length)
           return res.status(200).send({
@@ -192,8 +192,5 @@ else{
             message: error.message||"Internal Server Error"
         });
     }
-    finally {
-        console.log("entering and leaving the finally block");
-        await util.promisify(connection.end).bind(connection);
-    }
+   
  }
