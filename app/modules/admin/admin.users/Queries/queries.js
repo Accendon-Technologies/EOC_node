@@ -5,7 +5,7 @@ var util = require('util');
 exports.getadminusers_queries = async (req,res)=>{
     try{
     const query = util.promisify(connection.query).bind(connection);
-    const data = await query('SELECT FirstName,LastName,Email,PhoneNumber as Phone,status,profilephoto FROM adminusers')
+    const data = await query('SELECT FirstName,LastName,Email,PhoneNumber as Phone FROM adminusers')
     console.log(data)
      if(data.length>0){
          return res.status(200).json({
@@ -178,7 +178,7 @@ else{
     try{
         const query = util.promisify(connection.query).bind(connection);
         
-    const list =  await query(`SELECT * FROM adminusers WHERE  id= '${ req.query.id}'`)
+    const list =  await query(`SELECT * FROM adminusers WHERE status = 1 AND id= '${ req.query.id}'`)
       if(list.length>0){
           return res.status(200).send({
               status:true,
