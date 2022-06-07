@@ -12,7 +12,7 @@ exports.getalladminusers = async ( req,res)=>{
         
         }
         catch(err){
-         return res.status(400).send({
+          res.status(400).send({
                  status: false, 
                  message: err
             });

@@ -5,8 +5,14 @@ const queries = require('../Queries/query')
 
 
 exports.getall_Student = async (req,res)=>{
-const result = await queries.getstudent_queries(req,res)
-return result
+    try{
+        const result = await queries.getstudent_queries(req,res)
+        return result
+    }
+    catch(err){
+        res.status(500).send({
+            message:err.message})
+    }
 }
 
 exports.add_student= async (req,res)=>{

@@ -15,8 +15,8 @@ exports.getadminusers_queries = async (req,res)=>{
      }
      
       else{
-         return res.status(202).send({
-             status:false,
+         return res.status(202).json({
+             status:true,
              message:"no data founded",
              data : []
          })
@@ -84,7 +84,7 @@ return res.status(400).send({
 
  exports.update_query = async(req,res)=>{
     try{ 
-        const id = req.params.id
+        const id = req.query.id
         let FirstName = req.body.FirstName;
         let LastName = req.body.LastName;
         let Email = req.body.Email;
@@ -134,10 +134,11 @@ return res.status(400).send({
  exports.delete_query = async(req,res)=>{
  try{
     const query = util.promisify(connection.query).bind(connection)
-    const id = req.params.id
-    const result = await query(`select * from adminusers where student_id = '${req.params.id}'`)
+    const id = req.query.id
+    const result = await query(`select * from adminusers where id = '${req.query.id}'`)
+   
     if(result.length>0){
-    await query('DELETE FROM adminusers WHERE id = ?',[id],(err,row)=>{
+    await query(`DELETE FROM adminusers WHERE id = '${req.query.id}'`,[id],(err,row)=>{
         if(row){
             return res.status(200).send({
                 status:true,
@@ -145,6 +146,7 @@ return res.status(400).send({
             })
            
         }
+        
         else{
             return res.status(400).send({
                 status:true,
@@ -175,7 +177,7 @@ else{
     try{
         const query = util.promisify(connection.query).bind(connection);
         
-    const list =  await query(`SELECT * FROM adminusers WHERE  id= '${ req.params.id}'`)
+    const list =  await query(`SELECT * FROM adminusers WHERE  id= '${ req.query.id}'`)
       if(list.length>0){
           return res.status(200).send({
               status:true,

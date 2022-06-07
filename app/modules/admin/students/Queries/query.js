@@ -71,7 +71,7 @@ exports.getstudent_queries = async (req,res)=>{
 
        return res.status(200).json({
             status:true,
-            message:"added data of adminusers",
+            message:"added data ",
            
         })
          }

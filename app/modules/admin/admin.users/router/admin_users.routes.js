@@ -130,7 +130,7 @@ router.route('/api/delete-adminuser/:id').delete(controller.deleteadminusers)
 /** 
 * @swagger
 *
-* /api/adminusers/delete-adminuser/:id:
+* /api/delete-adminuser/:id:
 *   delete:
 *     description:
 *       - deleting the admin user
@@ -148,8 +148,8 @@ router.route('/api/delete-adminuser/:id').delete(controller.deleteadminusers)
 
 
 * 
-*       - name: id
-*         in: formData
+*       - in: query
+*         name: id
 *         required: true
 *         type: integer
 *         example:
@@ -186,7 +186,7 @@ router.route('/api/edit-adminuser/:id').put(controller.updateadminusers)
 *         required: true
 
 *       - name: id
-*         in: formData
+*         in: query
 *         required: true
 *         type: string
 *         example:
@@ -289,7 +289,7 @@ router.route('/api/getone-adminuser/:id').get(controller.getoneadminusers);
 *         value: application/x-www-form-urlencoded
 *         required: true
 
-*       - in: path
+*       - in: query
 *         name: id
 *         required: true
 *         type: integer

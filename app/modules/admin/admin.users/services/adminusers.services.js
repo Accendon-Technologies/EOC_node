@@ -5,8 +5,14 @@ const queries = require('../Queries/queries')
 
 
 exports.getadminusers = async (req,res)=>{
-const result = await queries.getadminusers_queries(req,res)
-return result
+    try{
+        const result = await queries.getadminusers_queries(req,res)
+        return res.satus(200).send(result)
+    }
+    catch(err){
+       return res.status(500).send({
+            message:err.message})
+    }
 }
 
 exports.addadminusers = async (req,res)=>{
@@ -60,11 +66,11 @@ exports.deleteadmin = async (req,res)=>{
 
 exports.update = async (req,res)=>{
     try{
-        const Id = req.params.id
+        const Id = req.query.id
        
        
         const query = util.promisify(connection.query).bind(connection);
-        const email= await query(`SELECT Email,PhoneNumber FROM adminusers Where id = '${req.params.id}'`)
+        const email= await query(`SELECT Email,PhoneNumber FROM adminusers Where id = '${req.query.id}'`)
 
        const value =email[0].Email
     
