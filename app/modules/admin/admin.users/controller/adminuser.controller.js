@@ -72,3 +72,16 @@ catch(err){
 }
 }
 
+exports.update_status = async(req,res) =>{
+    try {
+        const data = await adminservice.update_status_services(req,res);
+        console.log(data)
+      return res.status(data.status_code).send(data)
+        }
+ catch(err){
+     res.status(500).json({
+         status:false,
+         message:err.message
+     })
+ }
+}

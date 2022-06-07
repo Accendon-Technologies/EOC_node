@@ -6,6 +6,7 @@ exports.getadminusers_queries = async (req,res)=>{
     try{
     const query = util.promisify(connection.query).bind(connection);
     const data = await query('SELECT FirstName,LastName,Email,PhoneNumber as Phone,status,profilephoto FROM adminusers')
+    console.log(data)
      if(data.length>0){
          return res.status(200).json({
              status:true,
@@ -200,4 +201,46 @@ else{
         });
     }
    
+ }
+
+
+ exports.update_status_query = async (req,res)=>{
+   
+    try{
+        const query = util.promisify(connection.query).bind(connection);
+        const result = await query(`select * from adminusers where id = '${req.query.id}'`)
+    console.log(result)
+    if(result.length>0){
+         await query(`update adminusers set status = case when status = 1 then 0 else 1 end where id = '${req.query.id}'`,async (err,data)=>{
+             if(data){
+                 return res.json({
+                     status:true,
+                     status_code:200,
+                     message:"status updated"
+                 })
+             }
+             else{
+                 return res.status(400).send({
+                     status:true,
+                     message:err
+                 })
+             }
+         })
+        
+    }
+    else{
+        return res.send({
+            status:true,
+            status_code:400,
+            message:'no data found',
+            data : []
+        })
+    }
+}
+    catch(err){
+        return res.status(500).send({
+            status:false,
+            message:err
+        })
+    }
  }

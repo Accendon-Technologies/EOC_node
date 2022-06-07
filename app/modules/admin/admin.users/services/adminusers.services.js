@@ -141,3 +141,15 @@ exports.getone = async(req,res)=>{
       })
   }
 }
+
+exports.update_status_services = async (req,res)=>{
+    try{
+        const data = await queries.update_status_query(req,res)
+        return res.status(data.status_code).send(data)
+    }
+    catch(err){
+        return res.status(500).send({
+            message:err.message
+        })
+    }
+}

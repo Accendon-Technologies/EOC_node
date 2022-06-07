@@ -304,6 +304,41 @@ router.route('/api/getone-adminuser/:id').get(controller.getoneadminusers);
 
 
 
+router.route('/api/update-status/:id').put(controller.update_status)
+/** 
+* @swagger
+*
+* /api/update-status/:id:
+*   put:
+*     description:
+*       - update the status
+*     summary: update the status
+*     tags:
+*       - Admin-user Module
+*     produces:
+*       - application/json
+*     parameters:
+*       - in: header
+*         name: Content-Type
+*         type: string
+*         value: application/x-www-form-urlencoded
+*         required: true
+
+*       - in: query
+*         name: id
+*         required: true
+*         type: integer
+*         example:
+*          id: 45
+* 
+
+*     responses:
+*         200:
+*           description:Success
+*/
+
+
+
 
 
 module.exports = router
