@@ -6,7 +6,7 @@ exports.getadminusers_queries = async (req,res)=>{
     try{
     const query = util.promisify(connection.query).bind(connection);
     const data = await query('SELECT FirstName,LastName,Email,PhoneNumber as Phone FROM adminusers')
-    console.log(data)
+
      if(data.length>0){
          return res.status(200).json({
              status:true,

@@ -5,7 +5,7 @@ const router = express('Router');
 
 
 
-router.route('/api/classlist').get(controller.getalladminusers);
+router.route('/api/classlist').get(controller.getallclass);
 
 
 /** 
@@ -33,15 +33,15 @@ router.route('/api/classlist').get(controller.getalladminusers);
 */
 
 
-router.route('/api/add-adminuser').post(controller.createnewadminusers);
+router.route('/api/add-class').post(controller.createclass);
 /** 
 * @swagger
 *
-* /api/add-adminuser:
+* /api/add-class:
 *   post:
 *     description:
-*       - adding the admin users
-*     summary: Use to add admin-users
+*       - adding the class
+*     summary: Use to add class
 *     tags:
 *       - Admin-user Module
 *     produces:
@@ -55,19 +55,19 @@ router.route('/api/add-adminuser').post(controller.createnewadminusers);
 
 
 * 
-*       - name: FirstName 
+*       - name: Exam 
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          FirstName: Beena
+*          FirstName: ghjjk
 * 
-*       - name: LastName
+*       - name: Package
 *         in: formData
 *         required: true
 *         type: string
 *         example:
-*          Lastname: Babu
+*          Lastname: jkl
 * 
 *       - name: Email
 *         in: formData

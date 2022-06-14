@@ -97,7 +97,9 @@ require("./app/modules/admin/voucher/routes/admin.routes.js")(app); //  admin mo
 
 app.use('/',require('./app/modules/admin/admin.users/router/admin_users.routes.js'));//adminuser
 app.use('/',require('./app/modules/admin/students/router/students.routes.js'));//student
-app.use('/',require('./app/modules/admin/Batch/router/Batch.routes.js'));//B
+app.use('/',require('./app/modules/admin/Batch/router/Batch.routes.js'));//Batch
+
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

@@ -2,10 +2,11 @@ var connection = require('../../../../config/db.config').connection;
 var util = require('util');
 
 
-exports.getadminusers_queries = async (req,res)=>{
+exports.getclass_queries = async (req,res)=>{
     try{
     const query = util.promisify(connection.query).bind(connection);
-    const data = await query('SELECT FirstName,LastName,Email,PhoneNumber as Phone,status,profilephoto FROM classes')
+   
+    const data = await query('SELECT Title,Subtitle,Duartion,Streaming_Start_Date,Streaming_End_Date ,Class_Type FROM class')
     console.log(data)
      if(data.length>0){
          return res.status(200).json({
@@ -33,23 +34,24 @@ exports.getadminusers_queries = async (req,res)=>{
 
 
 
- exports.createadminusers_queries = async(req,res)=>{
+ exports.createclass_queries = async(req,res)=>{
    
           
     try{
-        let FirstName = req.body.FirstName;
-   let LastName = req.body.LastName;
-   let Email  =  req.body.Email;
-    let PhoneNumber = req.body.PhoneNumber;
-   let Username = req.body.Username;
-    let UserType = req.body.UserType;
-    let Password = req.body.Password;
-    let Subject = req.body.Subject;
-    let AboutInstructor = req.body.AboutInstructor;
-    let profilephoto = req.body.profilephoto;
-
+        let Exam = req.body.Exam;
+   let Package= req.body.Package;
+   let Subject =  req.body.Subject;
+    let Chapter = req.body.Chapter;
+   let Class_Type = req.body.Class_Type;
+    let Class_Title = req.body.Class_Title;
+    let Subtitle = req.body.Subtitle;
+    let Description = req.body.Description;
+    let Streaming_Start_Date = req.body.Streaming_Start_Date;
+    let Streaming_End_Date = req.body.Streaming_End_Date;
+    
+    var hours = Math.abs(  Streaming_Start_Date - Streaming_End_Date) / 36e5
         const query = util.promisify(connection.query).bind(connection)
-    const qr = `INSERT INTO classes(FirstName,LastName,Email,PhoneNumber,Username,Password,UserType,Subject,AboutInstructor,profilephoto) values('${FirstName}','${LastName}','${Email}','${PhoneNumber}','${Username}','${Password}','${UserType}','${Subject}','${AboutInstructor}','${profilephoto}')`
+    const qr = `INSERT INTO class(Exam,Package,Subject,Chapter,Class_Type,Class_Title,Subtitle,Description,Streaming_Start_Date,Streaming_End_Date,Thumbnail,Batch) values('${Exam}','${Package}','${Subject}','${Chapter}','${Class_Type}','${Class_Title}','${Subtitle}','${Description}','${Streaming_Start_Date}','${Streaming_End_Date}')`
     await query(qr,(err,result)=>{
        
         if(err){
