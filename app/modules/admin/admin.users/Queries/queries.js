@@ -74,14 +74,15 @@ exports.getadminusers_queries = async (req,res)=>{
     }
 
 
-catch(err){
-return res.status(400).send({
-  status:false,
-  message:err.message||"Data not entered"
-})
-}
+    catch(err){
+        return res.status(400).send({
+        status:false,
+        message:err.message||"Data not entered"
+        })
+    }
  }
 
+ ///update the adminusers//
 
  exports.update_query = async(req,res)=>{
     try{ 
@@ -97,11 +98,11 @@ return res.status(400).send({
         let AboutInstructor = req.body.AboutInstructor;
         let profilephoto = req.body.profilephoto;
     
-        const update = 'UPDATE adminusers SET FirstName = ?,LastName =?,Email =?,PhoneNumber =?,Username = ?,UserType =?,Password =?,Subject =?,AboutInstructor =?,profilephoto =? WHERE id = ?';
+        const update = 'UPDATE adminusers SET FirstName = ?,LastName =?,Email =?,PhoneNumber =?,Username = ?,Password =?,UserType =?,Subject =?,AboutInstructor =?,profilephoto =? WHERE id = ?';
     
         const query = util.promisify(connection.query).bind(connection)
         
-        await query(update,[FirstName,LastName,Email,PhoneNumber,Username,UserType,Password,Subject,AboutInstructor,profilephoto,id],(err,row)=>{
+        await query(update,[FirstName,LastName,Email,PhoneNumber,Username,Password,UserType,Subject,AboutInstructor,profilephoto,id],(err,row)=>{
           
           
             if(err){
@@ -109,7 +110,7 @@ return res.status(400).send({
                   
                 return res.status(404).send({
                     status:false,
-                    err: err
+                    message: err.message
                 })
               }
 
@@ -123,7 +124,7 @@ return res.status(400).send({
         })
     }
     catch(err){
-        return console.log({
+        return res.status(500).send({
             status:false,
             message:'internal server error'
         })
@@ -136,10 +137,11 @@ return res.status(400).send({
  try{
     const query = util.promisify(connection.query).bind(connection)
     const id = req.query.id
-    const result = await query(`select * from adminusers where id = '${req.query.id}'`)
+  
+    const result = await query(`select * from adminusers where id = '${req.params.id}'`)
    
     if(result.length>0){
-    await query(`DELETE FROM adminusers WHERE id = '${req.query.id}'`,[id],(err,row)=>{
+    await query(`DELETE FROM adminusers WHERE id = '${req.params.id}'`,[id],(err,row)=>{
         if(row){
             return res.status(200).send({
                 status:true,
@@ -149,16 +151,16 @@ return res.status(400).send({
         }
         
         else{
-            return res.status(400).send({
+            return res.status(404).send({
                 status:true,
                 message:"no data",
-                data : []
+                
             })
         }
     })
 }
 else{
-    return res.status(400).send({
+    return res.status(202).send({
         status:true,
         message:"no requested id found"
     })
@@ -178,7 +180,7 @@ else{
     try{
         const query = util.promisify(connection.query).bind(connection);
         
-    const list =  await query(`SELECT * FROM adminusers WHERE status = 1 AND id= '${ req.query.id}'`)
+    const list =  await query(`SELECT * FROM adminusers WHERE status = 1 AND id= '${ req.params.id}'`)
       if(list.length>0){
           return res.status(200).send({
               status:true,
@@ -208,14 +210,13 @@ else{
    
     try{
         const query = util.promisify(connection.query).bind(connection);
-        const result = await query(`select * from adminusers where id = '${req.query.id}'`)
+        const result = await query(`select * from adminusers where id = '${req.params.id}'`)
     console.log(result)
     if(result.length>0){
-         await query(`update adminusers set status = case when status = 1 then 0 else 1 end where id = '${req.query.id}'`,async (err,data)=>{
+         await query(`update adminusers set status = case when status = 1 then 0 else 1 end where id = '${req.params.id}'`,async (err,data)=>{
              if(data){
-                 return res.json({
+                 return res.status(200).json({
                      status:true,
-                     status_code:200,
                      message:"status updated"
                  })
              }
@@ -229,9 +230,8 @@ else{
         
     }
     else{
-        return res.send({
+        return res.status(400).send({
             status:true,
-            status_code:400,
             message:'no data found',
             data : []
         })

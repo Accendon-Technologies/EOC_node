@@ -34,18 +34,73 @@ describe("Tasks API", ()=>{
 
                     done();
                 })
+            })
+                it('it should  not return  all adminusers',(done)=>{
+                    chai.request(server)
+                        .get('/api/adminuserlist')
+                        .end((error,res)=>{
+                            res.should.have.status(202);
+                            res.body.should.have.property('status');
+                            res.body.should.have.property('message');
+                            res.body.should.have.property('data');
+
+                            done();
+                        })
+        
+        
 
         })
     })
+    
+
+    //getby id adminuser
+
+    describe("GET /api/adminusers/id",()=>{
+        
+        it('it should get  list of adminusers by id',(done)=>{
+            const id = 1;
+            chai.request(server)
+                .get('/api/getone-adminuser/'+id)
+                .end((error,res)=>{
+                    res.should.have.status(200);
+                  
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('data');
+
+                    done();
+                })
+            })
+            it('it should  not return  the adminusers',(done)=>{
+                const id = 2;
+                chai.request(server)
+                    .get('/api/getone-adminuser/'+id)
+                    .end((error,res)=>{
+                        res.should.have.status(202);
+                        res.body.should.have.property('status');
+                        res.body.should.have.property('message');
+                        res.body.should.have.property('data');
+
+                        done();
+                    })
+    
+    
+
+             })
+    })
+
+
+    // post the adminusers
 
     describe("Post the adminuser",()=>{
       
 
       it('post adminuser',(done)=>{
          chai. request(server).post('/api/add-adminuser')
-          .send({FirstName:'kevin',LastName:'mathew',Email:'kevin1234@gmail.com',PhoneNumber:'878563895',UserType:'teacher',Password:'hjh',Username:'buyt',Subject:'english',AboutInstructor:'gtyijj',profilephoto:'bhbscbh'})
+          .send({FirstName:'kevin',LastName:'mathew',Email:'kevin12347@gmail.com',PhoneNumber:'8788563895',UserType:'teacher',Password:'hjh',Username:'buyt',Subject:'english',AboutInstructor:'gtyijj',profilephoto:'bhbscbh'})
           .then((res)=>{
-              
+
                  res.body.should.have.property('status');
                  res.body.should.have.property('message').eql('added data of adminusers');
            
@@ -57,4 +112,76 @@ describe("Tasks API", ()=>{
       })
     })
 
+
+
+    //delete the adminusers
+
+
+    describe("delete /api/delete-adminuser/:id",()=>{
+      
+       
+        it('Should delete list of adminuser by using id',(done)=>{
+            const id = 112
+           chai. request(server)
+           .delete('/api/delete-adminuser/'+id) 
+            .end((err,res)=>{
+                    res.should.have.status(200)
+                   res.body.should.have.property('status');
+                   res.body.should.have.property('message');
+             
+           
+                done();
+  
+            })
+            
+      
+        })
+
+       it('Should not  delete list of adminuser by using id',(done)=>{
+            const id = 116
+           chai. request(server)
+           .delete('/api/delete-adminuser/'+id) 
+            .end((err,res)=>{
+                    res.should.have.status(202)
+                   res.body.should.have.property('status');
+                   res.body.should.have.property('message');
+             
+           
+                done();
+  
+            })
+            
+      
+        })
+        
+
+      })
+
+
+//update the adminusers
+
+      describe("put /api/edit-adminuser/:id",()=>{
+      
+       
+        it('Should update list of adminuser by using id',(done)=>{
+            const id =3;
+           chai. request(server)
+           .put('/api/edit-adminuser/'+id) 
+           .send({FirstName:'kevin',LastName:'mathew',Email:'kevin1234@gmail.com',PhoneNumber:'8788563678',UserType:'teacher',Password:'hjh',Username:'buyt',Subject:'english',AboutInstructor:'gtyijj',profilephoto:'bhbscbh'})
+            .end((err,res)=>{
+                
+                   res.body.should.have.property('status');
+                   res.body.should.have.property('message').eql('updated the adminuser');
+             
+           
+                done();
+  
+            })
+          
+      
+        })
+
+       
+      })
+      
 })

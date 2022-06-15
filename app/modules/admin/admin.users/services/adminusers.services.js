@@ -71,7 +71,7 @@ exports.update = async (req,res)=>{
        
        
         const query = util.promisify(connection.query).bind(connection);
-        const email= await query(`SELECT Email,PhoneNumber FROM adminusers Where id = '${req.query.id}'`)
+        const email= await query(`SELECT Email,PhoneNumber FROM adminusers Where id = '${req.params.id}'`)
 
        const value =email[0].Email
     

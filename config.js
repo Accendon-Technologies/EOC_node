@@ -19,17 +19,17 @@ const config = {
 
 
         // Dev DB
-        // host: 'eoc-dev.ch1bcu7lsudm.ap-south-1.rds.amazonaws.com', // database host
-        // user: 'ecodev', // your database username
-        // password: 'eocnodedev', // your database password
-        // port: 3306, // default MySQL port
-        // db: 'eoc', // your database name
+        host: 'eoc-dev.ch1bcu7lsudm.ap-south-1.rds.amazonaws.com', // database host
+        user: 'ecodev', // your database username
+        password: 'eocnodedev', // your database password
+        port: 3306, // default MySQL port
+        db: 'eoc', // your database name
 
-        host:'localhost',
-        user:'root',
-        password:'',
-        port: 3306,
-        db:'admin-blog'
+        // host:'localhost',
+        // user:'root',
+        // password:'',
+        // port: 3306,
+        // db:'admin-blog'
 
     },
     MEDIA_FOLDER: 'uploads',
