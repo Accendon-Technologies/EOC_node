@@ -67,23 +67,35 @@ exports.deleteadmin = async (req,res)=>{
 
 exports.update = async (req,res)=>{
     try{
-        const Id = req.query.id
-       
-       
-        const query = util.promisify(connection.query).bind(connection);
-        const email= await query(`SELECT Email,PhoneNumber FROM adminusers Where id = '${req.params.id}'`)
+        const Id = req.params.id
 
-       const value =email[0].Email
-    
-       const phone_value = email[0].PhoneNumber
-      
         const Email = req.body.Email
   
         const PhoneNumber = req.body.PhoneNumber
 
+        const query = util.promisify(connection.query).bind(connection);
+
        
-                   
-        if(value!==Email||phone_value!==PhoneNumber){
+
+       const checkid = await query(`SELECT id from adminusers where id ='${req.params.id}'`);
+
+        if(checkid.length<=0){
+            return res.status(202).send({
+                status:true,
+                message:"no data"
+            })
+        }
+      
+         else {
+
+           const email= await query(`SELECT Email,PhoneNumber FROM adminusers Where id = '${req.params.id}'`)
+      
+            const value =email[0].Email
+          
+            const phone_value = email[0].PhoneNumber
+       
+     
+             if(value!==Email||phone_value!==PhoneNumber){
             
             const result = await query(`SELECT Email FROM adminusers Where Email = '${req.body.Email}'`)
           
@@ -109,6 +121,7 @@ exports.update = async (req,res)=>{
                     }
                 }
                 else{
+                    console.log(result.length)
                     const data = await queries.update_query(req,res)
                     return res.status(200).send(data)   
                 }
@@ -116,17 +129,19 @@ exports.update = async (req,res)=>{
         }
                         
          else{
+           
             const data = await queries.update_query(req,res)
             return res.status(200).send(data)                           
         }
                     
-                   
+     }       
     
     }                
                     
     catch(err){
        return res.status(500).send({
-           message:err
+           status:false,
+           message:err.message
        })
     }
  }

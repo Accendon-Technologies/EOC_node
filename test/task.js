@@ -164,14 +164,14 @@ describe("Tasks API", ()=>{
       
        
         it('Should update list of adminuser by using id',(done)=>{
-            const id =3;
+            const id =4;
            chai. request(server)
            .put('/api/edit-adminuser/'+id) 
-           .send({FirstName:'kevin',LastName:'mathew',Email:'kevin1234@gmail.com',PhoneNumber:'8788563678',UserType:'teacher',Password:'hjh',Username:'buyt',Subject:'english',AboutInstructor:'gtyijj',profilephoto:'bhbscbh'})
+           .send({FirstName:'kevin',LastName:'mathew',Email:'kevin14@gmail.com',PhoneNumber:'8788563678',UserType:'teacher',Password:'hjh',Username:'buyt',Subject:'english',AboutInstructor:'gtyijj',profilephoto:'bhbscbh'})
             .end((err,res)=>{
                 
                    res.body.should.have.property('status');
-                   res.body.should.have.property('message').eql('updated the adminuser');
+                   res.body.should.have.property('message').eql("updated the adminuser ");
              
            
                 done();
@@ -183,5 +183,49 @@ describe("Tasks API", ()=>{
 
        
       })
+
+//update the status
+
+
+describe("put /api/update-status/:id",()=>{
+      
+       
+    it('Should update status of adminuser by using id',(done)=>{
+        const id =5;
+       chai. request(server)
+       .put('/api/update-status/'+id) 
+       
+        .end((err,res)=>{
+                res.should.have.status(200);
+               res.body.should.have.property('status');
+               res.body.should.have.property('message');
+         
+       
+            done();
+
+            })
+      
+  
+        })
+
+        it('Should not update status of adminuser by using id',(done)=>{
+            const id =3;
+           chai. request(server)
+           .put('/api/update-status/'+id) 
+           
+            .end((err,res)=>{
+                    res.should.have.status(400);
+                   res.body.should.have.property('status');
+                   res.body.should.have.property('message');
+             
+           
+                done();
+    
+                })
+          
+      
+            })
+    })
+
       
 })

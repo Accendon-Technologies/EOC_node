@@ -86,7 +86,7 @@ exports.getadminusers_queries = async (req,res)=>{
 
  exports.update_query = async(req,res)=>{
     try{ 
-        const id = req.query.id
+        const id = req.params.id
         let FirstName = req.body.FirstName;
         let LastName = req.body.LastName;
         let Email = req.body.Email;
@@ -233,7 +233,7 @@ else{
         return res.status(400).send({
             status:true,
             message:'no data found',
-            data : []
+            
         })
     }
 }

@@ -8,7 +8,7 @@
     "dev": "NODE_APP_STAGE=development node index.js",
     "staging": "NODE_APP_STAGE=staging node index.js",
     "production": "NODE_APP_STAGE=production node index.js",
-    "test": "NODE_APP_STAGE= development mocha"
+    "test": " mocha"
    
   },
   "author": "",
