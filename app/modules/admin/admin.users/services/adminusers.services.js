@@ -109,7 +109,7 @@ exports.update = async (req,res)=>{
                     
                    
                     if(email_id!=Id){
-                        console.log(result)
+                        
                         return res.status(400).send({
                             status:true,
                             message:` The ${req.body.Email} email or ${req.body.PhoneNumber} phonenumber already exists`

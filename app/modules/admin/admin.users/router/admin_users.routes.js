@@ -289,7 +289,7 @@ router.route('/api/getone-adminuser/:id').get(controller.getoneadminusers);
 *         value: application/x-www-form-urlencoded
 *         required: true
 
-*       - in: query
+*       - in: path
 *         name: id
 *         required: true
 *         type: integer

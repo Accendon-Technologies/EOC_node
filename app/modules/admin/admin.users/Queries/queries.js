@@ -211,7 +211,7 @@ else{
     try{
         const query = util.promisify(connection.query).bind(connection);
         const result = await query(`select * from adminusers where id = '${req.params.id}'`)
-    console.log(result)
+    
     if(result.length>0){
          await query(`update adminusers set status = case when status = 1 then 0 else 1 end where id = '${req.params.id}'`,async (err,data)=>{
              if(data){

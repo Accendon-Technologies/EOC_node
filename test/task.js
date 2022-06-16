@@ -15,7 +15,7 @@ let server = require('../index');
 chai.use(chaiHttp);
 
 
-describe("Tasks API", ()=>{
+describe("Tasks API - AdminUser", ()=>{
 
     // Test the get group
 
@@ -228,4 +228,112 @@ describe("put /api/update-status/:id",()=>{
     })
 
       
+})
+
+
+
+           
+    
+
+    
+
+/** package Test */
+
+describe('TASK API - PAckage',()=>{
+
+    /**get package test */
+
+
+    describe('GET /api/get_package',()=>{
+        it('should return details of all packages',(done)=>{
+            chai.request(server)
+                .get('/api/get_package')
+                .end((err,res)=>{
+                    res.should.have.status(200);
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('List');
+                    done();
+                })
+        })
+
+        it('should not return details of all packages',(done)=>{
+            chai.request(server)
+                .get('/api/get_package')
+                .end((err,res)=>{
+                    res.should.have.status(202);
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('List');
+                    done();
+                })
+        })
+    })
+
+
+
+    /** create pacakge test */
+
+    describe("POST /api/create_pacakge",()=>{
+      
+
+        it('should create  a package',(done)=>{
+           chai. request(server)
+            .post('/api/create_package')
+            .send({Exam:'PSC',Package_Title:'PSC and SSC',Short_Title:'PSC',Description:'combined video class of psc and ssc',Language:'Malayalam',Color_Code:'FFF#',Image:'dr.png',Package_Fee:'25000',Old_Package_Fee:'30000',Package_Duration_in_month:'lifetime',Package_Features:'mocktest'})
+            .end((err,res)=>{
+                res.should.have.status(200);
+                res.body.should.have.property('status');
+                res.body.should.have.property('message');
+                done();
+            })
+        })
+        it('should not create  a package',(done)=>{
+            chai. request(server)
+             .post('/api/create_package')
+             .send({Exam:'PSC',Package_Title:'PSC and SSC',Short_Title:'PSC',Description:'combined video class of psc and ssc',Language:'Malayalam',Color_Code:'FFF#',Image:'dr.png',Package_Fee:'25000',Old_Package_Fee:'30000',Package_Duration_in_month:'lifetime',Package_Features:'mocktest'})
+             .end((err,res)=>{
+                 res.should.have.status(400);
+                 res.body.should.have.property('status');
+                 res.body.should.have.property('message');
+                 done();
+             })
+         })
+      })
+
+
+      /** getone package */
+
+      describe('GET /api/getone_package',()=>{
+          it('Should get package by its id',(done)=>{
+              const id =2;
+              chai.request(server)
+                .get('/api/getone_package/'+id)
+                .end((err,res)=>{
+                    res.should.have.status(200);
+                    res.body.should.have.property('status');
+                    res.body.should.have.property('message');
+                    res.body.should.have.property('List');
+                    done();
+
+                })
+
+          })
+          it('Should not get package by its id',(done)=>{
+            const id =5;
+            chai.request(server)
+              .get('/api/getone_package/'+id)
+              .end((err,res)=>{
+                  res.should.have.status();
+                  res.body.should.have.property('status');
+                  res.body.should.have.property('message');
+                  res.body.should.have.property('List');
+                  done();
+                  
+              })
+
+        })
+      })
+
+
 })

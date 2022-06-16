@@ -66,7 +66,8 @@ const swaggerOptions = {
     "./app/modules/admin/voucher/routes/admin.routes.js",
     "./app/modules/admin/admin.users/router/admin_users.routes.js",
     "./app/modules/admin/students/router/students.routes.js",
-    "./app/modules/admin/Batch/router/Batch.routes.js"
+    "./app/modules/admin/Batch/router/Batch.routes.js",
+    "./app/modules/admin/Package/routes/Package_routes.js"
 
 
   ]
@@ -96,8 +97,9 @@ require("./app/modules/users/routes/user.routes.js")(app); //  user module
 require("./app/modules/admin/voucher/routes/admin.routes.js")(app); //  admin module
 
 app.use('/',require('./app/modules/admin/admin.users/router/admin_users.routes.js'));//adminuser
-app.use('/',require('./app/modules/admin/students/router/students.routes.js'));//student
+
 app.use('/',require('./app/modules/admin/Batch/router/Batch.routes.js'));//Batch
+app.use('/',require('./app/modules/admin/Package/routes/Package_routes.js'))
 
 
 
